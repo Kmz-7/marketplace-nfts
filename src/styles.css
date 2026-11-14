@@ -1,0 +1,72 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/roboto-mono";
+
+:root {
+  --font-family: "Roboto Mono Variable", monospace;
+  font-family: var(--font-family);
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --background: #140d0a;
+  --foreground: #f5f1eb;
+  --card: #241612;
+  --card-foreground: var(--foreground);
+  --popover: #211813;
+  --popover-foreground: var(--foreground);
+  --primary: #D28A4C;
+  --primary-foreground: #140d0a;
+  --secondary: #241612;
+  --surface-dark: #38220f;
+  --surface-dark-border: #55321F;
+  --secondary-foreground: var(--foreground);
+  --muted: #241612;
+  --muted-foreground: #cfb28c;
+  --link: #e89b55;
+  --accent: #d18a4a;
+  --accent-foreground: #140d0a;
+  --destructive: #c94a45;
+  --destructive-foreground: #fff7f5;
+  --border: #3b2a20;
+  --input: #3b2a20;
+  --ring: #d18a4a;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --font-sans: var(--font-family);
+  --font-mono: var(--font-family);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-surface-dark: var(--surface-dark);
+  --color-surface-dark-border: var(--surface-dark-border);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-link: var(--link);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+* { box-sizing: border-box; }
+html { min-width: 320px; min-height: 100%; background: var(--background); }
+body { min-width: 320px; min-height: 100vh; margin: 0; background: var(--background); color: var(--foreground); }
+button, input, textarea, select { font-family: inherit; }
