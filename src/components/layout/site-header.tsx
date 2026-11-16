@@ -1,9 +1,13 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 import { LogoutCurve, ShoppingCart } from 'iconsax-react'
-import { Search } from 'lucide-react'
+import { UserRound } from 'lucide-react'
 import { MenuIcon } from '@/components/ui/icons'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { useSession } from '@/hooks/use-auth'
+import { useMarketplaceState } from '@/components/providers/marketplace-state-provider'
+import { useAuthDialog } from '@/components/providers/auth-dialog-provider'
+import { HeaderNftSearch } from '@/components/layout/header-nft-search'
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -25,9 +29,15 @@ export interface SiteHeaderProps {
   isAuthenticated?: boolean
 }
 
-export function SiteHeader({ cartCount = 6, isAuthenticated = false }: SiteHeaderProps) {
+export function SiteHeader({ cartCount, isAuthenticated }: SiteHeaderProps) {
+  const sessionQuery = useSession()
+  const marketplace = useMarketplaceState()
+  const { openAuthDialog } = useAuthDialog()
+  const itemCount = cartCount ?? marketplace.cart.reduce((count, item) => count + item.quantity, 0)
+  const signedIn = isAuthenticated ?? Boolean(sessionQuery.data?.authenticated)
   const path = useRouterState({ select: (state) => state.location.pathname })
   const hash = useRouterState({ select: (state) => state.location.hash })
+  const homePage = path === '/' && hash !== 'catalogo'
   const marketPage =
     (path === '/' && hash === 'catalogo') || ['/nft', '/cart', '/payment'].includes(path)
 
@@ -60,12 +70,8 @@ export function SiteHeader({ cartCount = 6, isAuthenticated = false }: SiteHeade
               >
                 Mercado
               </SheetClose>
-              <span className="px-3 py-2 text-sm text-muted-foreground" aria-disabled="true">
-                Criadores
-              </span>
-              <span className="px-3 py-2 text-sm text-muted-foreground" aria-disabled="true">
-                Aprenda
-              </span>
+              <SheetClose render={<Link to="/creators" search={{ feature: undefined }} className="rounded-md px-3 py-2 text-sm hover:bg-muted" />}>Criadores</SheetClose>
+              <SheetClose render={<Link to="/learn" search={{ article: undefined }} className="rounded-md px-3 py-2 text-sm hover:bg-muted" />}>Aprenda</SheetClose>
             </nav>
           </SheetContent>
         </Sheet>
@@ -89,7 +95,7 @@ export function SiteHeader({ cartCount = 6, isAuthenticated = false }: SiteHeade
                     activeOptions={{ exact: true, includeHash: true, includeSearch: false }}
                   />
                 }
-                data-section-active={!marketPage || undefined}
+                data-section-active={homePage || undefined}
               >
                 Início
               </NavigationMenuLink>
@@ -109,43 +115,54 @@ export function SiteHeader({ cartCount = 6, isAuthenticated = false }: SiteHeade
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <span className="text-base text-muted-foreground" aria-disabled="true">
+              <NavigationMenuLink
+                render={<Link to="/creators" search={{ feature: undefined }} />}
+                data-section-active={path === '/creators' || undefined}
+              >
                 Criadores
-              </span>
+              </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <span className="text-base text-muted-foreground" aria-disabled="true">
+              <NavigationMenuLink
+                render={<Link to="/learn" search={{ article: undefined }} />}
+                data-section-active={path === '/learn' || undefined}
+              >
                 Aprenda
-              </span>
+              </NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-          <Button variant="ghost" size="icon" aria-label="Buscar NFTs">
-            <Search className="size-5" aria-hidden="true" />
-          </Button>
+          {/* No Figma, a busca e o carrinho tinham escalas diferentes; ações do cabeçalho usam ícones size-4. */}
+          <HeaderNftSearch />
           <Button
             render={<a href="/cart" />}
             variant="ghost"
             size="icon"
-            aria-label={`Carrinho, ${cartCount} itens`}
+            aria-label={`Carrinho, ${itemCount} itens`}
             className="relative"
           >
-            <ShoppingCart className="w-7! h-6!" color="currentColor" />
-            {cartCount > 0 && (
+            <ShoppingCart className="size-4" color="currentColor" />
+            {signedIn && itemCount > 0 && (
               <Badge className="absolute top-1 right-0 flex size-3.5 items-center justify-center rounded-full p-0 text-xs">
-                <span className="scale-90">{cartCount}</span>
+                <span className="scale-90">{itemCount}</span>
               </Badge>
             )}
           </Button>
           <Button
-            render={<a href={isAuthenticated ? '/profile' : '/login'} />}
-            className="hidden h-10 gap-1 rounded-lg px-3 text-base sm:inline-flex"
-            aria-label={isAuthenticated ? 'Acessar perfil' : 'Entrar'}
+            render={signedIn ? <a href="/profile" /> : undefined}
+            className="hidden h-10 gap-1 rounded-lg px-3 text-md sm:inline-flex"
+            aria-label={signedIn ? 'Acessar perfil' : 'Entrar'}
+            onClick={signedIn ? undefined : () => openAuthDialog()}
           >
-            <LogoutCurve color="currentColor" className="-scale-x-100 w-5! h-5!" />
-            {isAuthenticated ? 'Perfil' : 'Entrar'}
+            {/* O Figma repetia o ícone de entrar no estado autenticado; o perfil usa um ícone de usuário. */}
+            {signedIn ? (
+              <UserRound className="size-4" aria-hidden="true" />
+            ) : (
+              <LogoutCurve color="currentColor" className="-scale-x-100 size-4" />
+            )}
+            {signedIn ? 'Perfil' : 'Entrar'}
           </Button>
         </div>
       </div>

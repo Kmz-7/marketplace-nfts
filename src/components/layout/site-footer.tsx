@@ -1,8 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { CompatibleWallets } from '@/components/compatible-wallets'
+import { toast } from 'sonner'
+import { InputGroup, InputGroupButton, InputGroupInput } from '@/components/ui/input-group'
 
 const benefits = [
   {
@@ -64,30 +66,42 @@ export function SiteFooter() {
               <div className="flex size-[75px] shrink-0 items-center justify-center rounded-full border-2 border-primary bg-primary text-lg font-bold text-primary-foreground">
                 {initial}
               </div>
-              <h2 className="text-[17px] leading-4 font-bold">{title}</h2>
-              <p className="max-w-[204px] text-sm leading-[22px] text-muted-foreground">{text}</p>
+              <h2 className="text-lg leading-4 font-bold">{title}</h2>
+              <p className="max-w-[204px] text-md leading-6 text-muted-foreground">{text}</p>
             </Card>
           ))}
-          <form className="flex flex-col gap-3" onSubmit={(event) => event.preventDefault()}>
+          <form
+            className="flex flex-col gap-3"
+            onSubmit={(event) => {
+              event.preventDefault()
+              // O endpoint de newsletter ainda não existe; a recarga simulada limpa o campo após a confirmação.
+              toast.success('Seu email foi cadastrado em nosso newslettrer, acompanhe as novidades que te enviarmos')
+              window.setTimeout(() => window.location.reload(), 5000)
+            }}
+          >
             <Label variant="newsletterTitle" htmlFor="newsletter-email">
               Antecipe-se ao próximo lançamento
             </Label>
-            <div className="flex gap-0">
-              <Input
+            {/* No Figma, input e envio tinham raios e foco separados; o grupo compartilha a borda e o foco em todo o conjunto. */}
+            <InputGroup className="h-10 rounded-lg border-primary bg-surface-dark focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
+              <InputGroupInput
                 id="newsletter-email"
                 type="email"
                 placeholder="digite seu e-mail..."
-                variant="newsletter"
+                aria-label="E-mail para novidades"
+                required
+                className="h-full rounded-none px-3 text-xs focus-visible:ring-0"
               />
-              <Button type="submit" className="h-10 rounded-l-none rounded-r-sm px-3 text-sm">
+              <InputGroupButton type="submit" variant="default" className="h-full rounded-none rounded-r-lg px-3 text-sm">
                 Enviar
-              </Button>
-            </div>
-            <p className="mt-3 text-sm leading-[22px] text-muted-foreground">
+              </InputGroupButton>
+            </InputGroup>
+            <p className="mt-3 text-md leading-6 text-muted-foreground">
               Receba lançamentos selecionados, histórias de criadores e novidades do mercado.
             </p>
           </form>
         </section>
+        {/* No Figma, a descrição do rodapé aparecia menor que os demais parágrafos; ela segue a escala md. */}
         <div className="grid gap-4 bg-surface-dark/80 px-8 py-5 sm:grid-cols-2 lg:h-[88px] lg:grid-cols-4 lg:items-center lg:py-0">
           <Button
             render={<Link to="/" />}
@@ -96,7 +110,7 @@ export function SiteFooter() {
           >
             KURIO
           </Button>
-          <p className="text-sm leading-5 text-muted-foreground">
+          <p className="text-md leading-6 text-muted-foreground">
             Feito para colecionadores,
             <br />
             criadores e cultura
@@ -153,10 +167,7 @@ export function SiteFooter() {
             </div>
             <div className="mt-8 w-fit">
               <h3 className="text-lg leading-4 font-bold">Carteiras compatíveis</h3>
-              <div className="mt-3 flex w-full flex-row rounded-sm border border-surface-dark-border bg-surface-dark py-1 text-xs uppercase text-primary">
-                <p className="px-3">MetaMask</p> ·<p className="px-3">WalletConnect</p> ·
-                <p className="px-2 pe-0">Coinbase</p>
-              </div>
+              <CompatibleWallets className="mt-3" />
             </div>
           </section>
         </div>

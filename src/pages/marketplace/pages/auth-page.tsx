@@ -3,13 +3,19 @@ import { DesktopAuthDialog } from '@/pages/marketplace/components/auth/desktop-a
 import { useIsMobile } from '@/hooks/use-mobile'
 import { HomePage } from '@/pages/home/home.page'
 
-export function AuthPage({ register = false }: { register?: boolean }) {
+export function AuthPage({
+  register = false,
+  returnTo,
+}: {
+  register?: boolean
+  returnTo?: string
+}) {
   const isMobile = useIsMobile()
 
   if (isMobile) {
     return (
       <main className="mx-auto w-full max-w-md">
-        <AuthForm register={register} />
+        <AuthForm register={register} returnTo={returnTo} />
       </main>
     )
   }
@@ -17,7 +23,7 @@ export function AuthPage({ register = false }: { register?: boolean }) {
   return (
     <>
       <HomePage />
-      <DesktopAuthDialog register={register} />
+      <DesktopAuthDialog register={register} returnTo={returnTo} />
     </>
   )
 }

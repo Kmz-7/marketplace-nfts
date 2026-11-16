@@ -1,82 +1,136 @@
 import { useNavigate } from '@tanstack/react-router'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { AuthFormFields } from './auth-form-fields'
+import { useAuthForm } from './use-auth-form'
 
-export function DesktopAuthDialog({ register }: { register: boolean }) {
+export function DesktopAuthDialog({
+  register,
+  returnTo,
+  open = true,
+  onOpenChange,
+  onRegisterChange,
+  onSuccess,
+}: {
+  register: boolean
+  returnTo?: string
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  onRegisterChange?: (register: boolean) => void
+  onSuccess?: () => void
+}) {
   const navigate = useNavigate()
+  const authForm = useAuthForm(register, returnTo, onSuccess)
 
   return (
     <Dialog
-      open
+      open={open}
       onOpenChange={(open) => {
-        if (!open) void navigate({ to: '/' })
+        if (onOpenChange) onOpenChange(open)
+        else if (!open) void navigate({ to: returnTo ?? '/' })
       }}
     >
+      {/* No Figma, o fundo do login ficava sem desfoque; o overlay escurecido e blur realçam o diálogo sem trocar a página. */}
       <DialogContent
-        className="max-h-[calc(100vh-2rem)] max-w-[344px] overflow-y-auto border-0 bg-card p-5"
-        overlayClassName="bg-black/65"
+        className="auth-dialog-content flex max-h-[calc(100dvh-2rem)] flex-col items-center gap-0 overflow-y-auto rounded-lg border border-border border-b-8 border-b-primary bg-secondary p-0"
+        overlayClassName="bg-background/65 backdrop-blur-sm supports-backdrop-filter:backdrop-blur-sm"
       >
         <DialogTitle className="sr-only">{register ? 'Criar conta' : 'Entrar'}</DialogTitle>
         <DialogDescription className="sr-only">
           Entre para gerenciar sua carteira, coleção e perfil.
         </DialogDescription>
-        <Tabs
-          value={register ? 'register' : 'login'}
-          onValueChange={(value) =>
-            void navigate({ to: value === 'register' ? '/register' : '/login' })
-          }
-        >
-          <TabsList variant="line" className="h-auto w-full justify-start gap-6 rounded-none p-0">
-            <TabsTrigger value="login" className="rounded-none px-0 py-2 text-sm after:bg-primary">
-              Entrar
-            </TabsTrigger>
-            <TabsTrigger
-              value="register"
-              className="rounded-none px-0 py-2 text-sm after:bg-primary"
-            >
-              Criar conta
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-        <p className="mt-4 text-center text-xs leading-5 text-muted-foreground">
-          Entre para gerenciar sua carteira, coleção e perfil
+        <nav aria-label="Acesso à conta" className="mt-1 flex items-center justify-center gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            aria-current={!register ? 'page' : undefined}
+            className={`h-6 rounded-none bg-transparent px-0 text-sm hover:bg-transparent ${!register ? 'text-primary hover:text-primary' : 'text-foreground hover:text-primary'}`}
+            onClick={() =>
+              onRegisterChange
+                ? onRegisterChange(false)
+                : void navigate({ to: '/login', search: { returnTo } })
+            }
+          >
+            Entrar
+          </Button>
+          <span className="text-sm text-muted-foreground">|</span>
+          <Button
+            type="button"
+            variant="ghost"
+            aria-current={register ? 'page' : undefined}
+            className={`h-6 rounded-none bg-transparent px-0 text-sm hover:bg-transparent ${register ? 'text-primary hover:text-primary' : 'text-foreground hover:text-primary'}`}
+            onClick={() =>
+              onRegisterChange
+                ? onRegisterChange(true)
+                : void navigate({ to: '/register', search: { returnTo } })
+            }
+          >
+            Criar conta
+          </Button>
+        </nav>
+        <p className="mt-6 text-center text-xs leading-4 text-foreground">
+          {register
+            ? 'Crie sua conta para gerenciar sua carteira, coleção e perfil de criador.'
+            : 'Entre para gerenciar sua carteira, coleção e perfil de criador.'}
         </p>
-        <form className="mt-5 space-y-3" onSubmit={(event) => event.preventDefault()}>
-          {register && (
-            <Input aria-label="Nome de usuário" placeholder="Nome de usuário" variant="auth" />
-          )}
-          <Input type="email" aria-label="E-mail" placeholder="Digite seu e-mail" variant="auth" />
-          <Input type="password" aria-label="Senha" placeholder="Senha" variant="auth" />
-          {register && (
-            <Input
-              type="password"
-              aria-label="Confirmar senha"
-              placeholder="Confirmar senha"
-              variant="auth"
-            />
+        <form noValidate className="w-full px-8 mt-4 grid gap-2" onSubmit={authForm.handleSubmit}>
+          <AuthFormFields
+            register={register}
+            variant="authDialog"
+            values={authForm.values}
+            errors={authForm.errors}
+            showPassword={authForm.showPassword}
+            disabled={authForm.isPending}
+            onFieldChange={authForm.updateField}
+            onTogglePassword={authForm.togglePassword}
+          />
+          {authForm.formError && (
+            <p role="alert" className="text-xs text-destructive">
+              {authForm.formError}
+            </p>
           )}
           {!register && (
-            <Button type="button" variant="link" className="h-auto p-0 text-xs text-primary">
+            <Button
+              type="button"
+              variant="link"
+              className="mt-0 h-auto justify-self-end p-0 text-xs font-normal text-primary hover:text-primary"
+              onClick={() =>
+                toast.info('A recuperação de senha não está disponível nesta simulação.')
+              }
+            >
               Esqueceu a senha?
             </Button>
           )}
-          <Button type="submit" className="h-10 w-full rounded-lg">
-            {register ? 'Criar conta' : 'Entrar'}
+          <Button
+            type="submit"
+            className="mt-3 h-8 w-full rounded-sm text-xs"
+            disabled={authForm.isPending}
+          >
+            {authForm.isPending ? 'Aguarde...' : register ? 'Criar conta' : 'Entrar'}
           </Button>
         </form>
-        <div className="mt-5 flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="h-px flex-1 bg-border" />
-          Ou continue com
-          <span className="h-px flex-1 bg-border" />
+        <div className="mt-5 flex w-full items-center gap-2 text-center text-xs text-foreground">
+          <span className="h-px flex-1 -ms-10 bg-border" />
+          <span className="shrink-0">Ou continue com</span>
+          <span className="h-px flex-1 -me-7.5 bg-border" />
         </div>
-        <div className="mt-4 grid gap-3">
-          <Button variant="outline" className="h-10 rounded-lg">
-            <span className="font-semibold text-primary">G</span> Continuar com Google
+        <div className="space-y-3 mt-5 mb-10 grid w-full px-8">
+          <Button
+            variant="outline"
+            className="h-8 rounded-sm border-checkout-border bg-transparent! px-2 text-xs text-muted-foreground font-normal hover:bg-card hover:text-foreground"
+            onClick={() => toast.info('O acesso com Google não está disponível nesta simulação.')}
+          >
+            <img src="/assets/helpers/google.svg" alt="" className="h-3.5 w-auto me-1" />
+            Continuar com Google
           </Button>
-          <Button variant="outline" className="h-10 rounded-lg">
-            <span className="font-semibold text-primary">f</span> Continuar com Facebook
+          <Button
+            variant="outline"
+            className="h-8 rounded-sm border-checkout-border bg-transparent! px-2 text-xs text-muted-foreground hover:bg-card hover:text-foreground"
+            onClick={() => toast.info('O acesso com Facebook não está disponível nesta simulação.')}
+          >
+            <img src="/assets/helpers/facebook.svg" alt="" className="h-3.5 w-auto me-1" />
+            Continuar com Facebook
           </Button>
         </div>
       </DialogContent>

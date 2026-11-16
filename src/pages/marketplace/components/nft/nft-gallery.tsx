@@ -1,24 +1,29 @@
 import { Button } from '@/components/ui/button'
-import { SearchIcon } from '@/components/ui/icons'
+import { ZoomIn } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 
 type NftGalleryProps = {
   gallery: string[]
   selectedImage: string
+  selectedImageIndex: number
+  nftName: string
   isImageLoading: boolean
-  onSelectImage: (image: string) => void
+  onSelectImage: (index: number) => void
   onOpenFullscreen: () => void
 }
 
 export function NftGallery({
   gallery,
   selectedImage,
+  selectedImageIndex,
+  nftName,
   isImageLoading,
   onSelectImage,
   onOpenFullscreen,
 }: NftGalleryProps) {
   return (
     <div className="flex flex-col-reverse gap-3 md:flex-row">
+      {/* No Figma, as miniaturas pareciam apenas decorativas; clicar em qualquer uma agora troca a seleção, mesmo quando a arte é igual, e mostra o estado de carregamento. */}
       <div className="grid grid-cols-4 gap-2 md:flex md:w-[18%] md:flex-col md:justify-between">
         {gallery.map((image, index) => (
           <Button
@@ -26,8 +31,8 @@ export function NftGallery({
             type="button"
             variant="ghost"
             aria-label={`Ver imagem ${index + 1} do NFT`}
-            aria-pressed={selectedImage === image && index === 0}
-            onClick={() => onSelectImage(image)}
+            aria-pressed={selectedImageIndex === index}
+            onClick={() => onSelectImage(index)}
             className={`h-auto w-full rounded-lg border p-0 hover:bg-transparent md:min-h-0 md:flex-1 ${selectedImage === image ? 'border-primary' : 'border-transparent'}`}
           >
             <img
@@ -44,8 +49,8 @@ export function NftGallery({
         ) : (
           <img
             src={selectedImage}
-            alt="Emerald Ape #042"
-            className="h-full w-full rounded-[15px] object-cover"
+            alt={nftName}
+            className="image-standard h-full w-full rounded-[15px]"
           />
         )}
         <Button
@@ -56,7 +61,8 @@ export function NftGallery({
           onClick={onOpenFullscreen}
           className="absolute top-2 right-2 z-10 rounded-full border border-card bg-card text-foreground hover:bg-card/90 hover:text-foreground"
         >
-          <SearchIcon className="size-5" />
+          {/* No Figma, a lupa deste controle destoava das demais ações; os ícones comuns usam size-4. */}
+          <ZoomIn className="size-4" />
         </Button>
       </div>
     </div>

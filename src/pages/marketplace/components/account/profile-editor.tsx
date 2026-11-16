@@ -26,7 +26,7 @@ function ProfileField({ field }: { field: string }) {
 export function ProfileEditor() {
   return (
     <section aria-labelledby="collector-profile-title">
-      <h2 id="collector-profile-title" className="text-xl font-semibold">
+      <h2 id="collector-profile-title" className="text-lg font-semibold">
         Perfil do colecionador
       </h2>
       <form onSubmit={(event) => event.preventDefault()} className="mt-6">

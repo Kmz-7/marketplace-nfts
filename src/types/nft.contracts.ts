@@ -6,11 +6,13 @@ export interface NftContract {
   priceEth: string
   previousPriceEth?: string
   edition: string
+  editionPricesEth?: Record<string, string>
   collection: string
   network: string
   available: boolean
   featured: boolean
   imageOnly?: boolean
+  rarityBadge?: string
   createdAt: string
 }
 

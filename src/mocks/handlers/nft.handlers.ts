@@ -2,6 +2,7 @@ import { delay, http, HttpResponse } from 'msw'
 import type { ApiErrorContract } from '@/types/user.contracts'
 import type { NftQueryParams } from '@/types/nft.contracts'
 import { broadcastNftUpdated } from '@/mocks/socket/socket.server'
+import { resetMockAuth } from '@/mocks/state/auth.store'
 import {
   getNetworkScenario,
   getNft,
@@ -134,6 +135,7 @@ export const nftHandlers = [
 
   http.post('/api/mock/reset', () => {
     resetNftStore()
+    resetMockAuth()
     return HttpResponse.json({ reset: true })
   }),
 

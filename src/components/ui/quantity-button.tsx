@@ -5,25 +5,32 @@ type QuantityButtonProps = {
   action: 'decrease' | 'increase'
   label: string
   scale?: 'compact' | 'large'
+  disabled?: boolean
   onClick: () => void
 }
 
-export function QuantityButton({ action, label, scale = 'compact', onClick }: QuantityButtonProps) {
+export function QuantityButton({
+  action,
+  label,
+  scale = 'compact',
+  disabled = false,
+  onClick,
+}: QuantityButtonProps) {
   const isLarge = scale === 'large'
   const Icon = action === 'decrease' ? Minus : Plus
 
+  // No exemplo do Figma, os controles de quantidade tinham proporções estreitas e altas; os tamanhos shadcn instalados mantêm alvos de toque proporcionais.
   return (
     <Button
       type="button"
       variant="default"
       size={isLarge ? 'icon-sm' : 'icon-xs'}
-      className={`p-0 text-primary-foreground hover:bg-primary/90 ${
-        isLarge ? 'h-[49.5px] w-8.5 rounded-[28px]' : 'h-7 w-5 rounded-full'
-      }`}
+      className="rounded-lg p-0 text-primary-foreground hover:bg-primary/90"
       aria-label={label}
+      disabled={disabled}
       onClick={onClick}
     >
-      <Icon className={isLarge ? 'size-6' : 'size-4'} />
+      <Icon className="size-4" />
     </Button>
   )
 }

@@ -6,12 +6,12 @@ export const images = {
 }
 
 export const items = [
-  { name: 'Emerald Ape #042', edition: '1/50', price: '1.19', image: images.emerald },
-  { name: 'Violet Nomad #314', edition: '1/1', price: '1.39', image: images.violet },
-  { name: 'Ivory Baron #088', edition: '1/10', price: '1.79', image: images.ivory },
-  { name: 'Golden Beat #207', edition: '1/50', price: '0.99', image: images.golden },
-  { name: 'Emerald Signal #160', edition: '1/25', price: '0.89', image: images.emerald },
-  { name: 'Sage Nomad #009', edition: '1/1', price: '1.69', image: images.violet },
-  { name: 'Ivory Baron #883', edition: '1/10', price: '1.79', image: images.ivory },
-  { name: 'Golden Hour #409', edition: '1/50', price: '0.89', image: images.golden },
+  { id: 'emerald-ape-042', name: 'Emerald Ape #042', creator: 'Nova Sato', edition: '1/50', collection: 'Kurio Apes', price: '1.19', image: images.emerald },
+  { id: 'violet-nomad-314', name: 'Violet Nomad #314', creator: 'Mika Tanaka', edition: '1/1', collection: 'Kurio Nomads', price: '1.39', image: images.violet },
+  { id: 'ivory-baron-088', name: 'Ivory Baron #088', creator: 'Nova Sato', edition: '1/10', collection: 'Kurio Apes', price: '1.79', image: images.ivory },
+  { id: 'golden-beat-287', name: 'Golden Beat #287', creator: 'Studio K', edition: '1/50', collection: 'Golden Beats', price: '0.99', image: images.golden },
+  { id: 'emerald-signal-160', name: 'Emerald Signal #160', creator: 'Nova Sato', edition: '1/25', collection: 'Kurio Apes', price: '0.89', image: images.emerald },
+  { id: 'sage-nomad-009', name: 'Sage Nomad #009', creator: 'Mika Tanaka', edition: '1/1', collection: 'Kurio Nomads', price: '1.69', image: images.violet },
+  { id: 'ivory-baron-883', name: 'Ivory Baron #883', creator: 'Nova Sato', edition: '1/10', collection: 'Kurio Apes', price: '1.79', image: images.ivory },
+  { id: 'golden-hour-409', name: 'Golden Hour #409', creator: 'Studio K', edition: '1/50', collection: 'Golden Beats', price: '0.89', image: images.golden },
 ]

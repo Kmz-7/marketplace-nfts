@@ -36,7 +36,7 @@ export function OrderConfirmationCard() {
       <CardContent className="p-0">
         <div className="flex flex-col items-center text-center">
           <img src="/assets/helpers/envelope.svg" alt="" className="h-20 w-[66px] object-contain" />
-          <h1 className="mt-3 text-md leading-6 font-semibold text-muted-foreground">
+          <h1 className="mt-3 text-lg leading-6 font-semibold text-muted-foreground">
             Seus NFTs agora estão na sua carteira
           </h1>
         </div>
@@ -53,7 +53,7 @@ export function OrderConfirmationCard() {
           </div>
 
           <div className="mt-4">
-            <h2 className="text-sm font-semibold">Detalhes da transação</h2>
+            <h2 className="text-lg font-semibold">Detalhes da transação</h2>
             <Table
               aria-label="Itens da transação"
               className="w-full table-fixed border-separate border-spacing-x-0 border-spacing-y-2 text-xs"
@@ -81,10 +81,11 @@ export function OrderConfirmationCard() {
                   <TableRow key={item.name} className="border-0 hover:bg-transparent">
                     <TableCell className="p-0">
                       <div className="flex min-w-0 items-center gap-2">
+                        {/* O Figma variava o tamanho das miniaturas dentro do mesmo recibo; todas seguem a dimensão compartilhada de 64 px. */}
                         <img
                           src={item.image}
                           alt=""
-                          className={`${index === 0 ? 'size-[70px]' : index === 1 ? 'size-[66px]' : 'size-[65px]'} shrink-0 rounded-sm object-cover`}
+                          className="image-thumbnail rounded-sm"
                         />
                         <div className="min-w-0">
                           <p className="truncate text-xs font-semibold">{item.name}</p>
@@ -100,7 +101,7 @@ export function OrderConfirmationCard() {
                       (x {item.quantity})
                     </TableCell>
                     <TableCell
-                      className={`p-0 text-right text-base font-semibold text-primary ${index === 0 ? 'pe-2' : index === 1 ? 'pe-1' : ''}`}
+                      className={`p-0 text-right text-md font-semibold text-primary ${index === 0 ? 'pe-2' : index === 1 ? 'pe-1' : ''}`}
                     >
                       {(Number(item.price) * item.quantity).toFixed(2)} ETH
                     </TableCell>
@@ -114,7 +115,7 @@ export function OrderConfirmationCard() {
                   <span className="font-light">Taxa de rede</span>
                   <span className="font-medium">Total</span>
                 </p>
-                <p className="flex flex-col text-base text-end">
+                <p className="flex flex-col text-md text-end">
                   <span>0.016 ETH</span>
                   <span className="text-primary">26.846 ETH</span>
                 </p>
@@ -143,7 +144,7 @@ export function OrderConfirmationCard() {
 
 function ConfirmationDetail({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col text-left text-[10px] text-muted-foreground">
+    <div className="flex flex-col text-left text-xs text-muted-foreground">
       <p className="font-semibold">{label}</p>
       <p className="mt-0.5 font-normal">{value}</p>
     </div>

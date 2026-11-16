@@ -13,6 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LegacyRouteImport } from './routes/$legacy'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as ConfirmationRouteImport } from './routes/confirmation'
+import { Route as CreatorsRouteImport } from './routes/creators'
+import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as LearnRouteImport } from './routes/learn'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NftRouteImport } from './routes/nft'
 import { Route as PaymentRouteImport } from './routes/payment'
@@ -38,6 +41,21 @@ const CartRoute = CartRouteImport.update({
 const ConfirmationRoute = ConfirmationRouteImport.update({
   id: '/confirmation',
   path: '/confirmation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreatorsRoute = CreatorsRouteImport.update({
+  id: '/creators',
+  path: '/creators',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -76,6 +94,9 @@ export interface FileRoutesByFullPath {
   '/$legacy': typeof LegacyRoute
   '/cart': typeof CartRoute
   '/confirmation': typeof ConfirmationRoute
+  '/creators': typeof CreatorsRoute
+  '/favorites': typeof FavoritesRoute
+  '/learn': typeof LearnRoute
   '/login': typeof LoginRoute
   '/nft': typeof NftRoute
   '/payment': typeof PaymentRoute
@@ -88,6 +109,9 @@ export interface FileRoutesByTo {
   '/$legacy': typeof LegacyRoute
   '/cart': typeof CartRoute
   '/confirmation': typeof ConfirmationRoute
+  '/creators': typeof CreatorsRoute
+  '/favorites': typeof FavoritesRoute
+  '/learn': typeof LearnRoute
   '/login': typeof LoginRoute
   '/nft': typeof NftRoute
   '/payment': typeof PaymentRoute
@@ -101,6 +125,9 @@ export interface FileRoutesById {
   '/$legacy': typeof LegacyRoute
   '/cart': typeof CartRoute
   '/confirmation': typeof ConfirmationRoute
+  '/creators': typeof CreatorsRoute
+  '/favorites': typeof FavoritesRoute
+  '/learn': typeof LearnRoute
   '/login': typeof LoginRoute
   '/nft': typeof NftRoute
   '/payment': typeof PaymentRoute
@@ -115,6 +142,9 @@ export interface FileRouteTypes {
     | '/$legacy'
     | '/cart'
     | '/confirmation'
+    | '/creators'
+    | '/favorites'
+    | '/learn'
     | '/login'
     | '/nft'
     | '/payment'
@@ -127,6 +157,9 @@ export interface FileRouteTypes {
     | '/$legacy'
     | '/cart'
     | '/confirmation'
+    | '/creators'
+    | '/favorites'
+    | '/learn'
     | '/login'
     | '/nft'
     | '/payment'
@@ -139,6 +172,9 @@ export interface FileRouteTypes {
     | '/$legacy'
     | '/cart'
     | '/confirmation'
+    | '/creators'
+    | '/favorites'
+    | '/learn'
     | '/login'
     | '/nft'
     | '/payment'
@@ -152,6 +188,9 @@ export interface RootRouteChildren {
   LegacyRoute: typeof LegacyRoute
   CartRoute: typeof CartRoute
   ConfirmationRoute: typeof ConfirmationRoute
+  CreatorsRoute: typeof CreatorsRoute
+  FavoritesRoute: typeof FavoritesRoute
+  LearnRoute: typeof LearnRoute
   LoginRoute: typeof LoginRoute
   NftRoute: typeof NftRoute
   PaymentRoute: typeof PaymentRoute
@@ -188,6 +227,27 @@ declare module '@tanstack/react-router' {
       path: '/confirmation'
       fullPath: '/confirmation'
       preLoaderRoute: typeof ConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/creators': {
+      id: '/creators'
+      path: '/creators'
+      fullPath: '/creators'
+      preLoaderRoute: typeof CreatorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -240,6 +300,9 @@ const rootRouteChildren: RootRouteChildren = {
   LegacyRoute: LegacyRoute,
   CartRoute: CartRoute,
   ConfirmationRoute: ConfirmationRoute,
+  CreatorsRoute: CreatorsRoute,
+  FavoritesRoute: FavoritesRoute,
+  LearnRoute: LearnRoute,
   LoginRoute: LoginRoute,
   NftRoute: NftRoute,
   PaymentRoute: PaymentRoute,

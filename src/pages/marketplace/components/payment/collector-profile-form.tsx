@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label, RequiredMark } from '@/components/ui/label'
@@ -9,23 +10,50 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { useSession } from '@/hooks/use-auth'
 
 export function CollectorProfileForm() {
+  const session = useSession()
+  const user = session.data?.user
+  const [profileValues, setProfileValues] = useState({
+    displayName: '',
+    email: '',
+    profileName: '',
+  })
+
+  useEffect(() => {
+    if (!user) return
+    setProfileValues((current) => ({
+      displayName: current.displayName || user.name,
+      email: current.email || user.email,
+      profileName: current.profileName || user.name,
+    }))
+  }, [user?.email, user?.id, user?.name])
+
   return (
     <section aria-labelledby="collector-profile-title" className="min-w-0">
-      <h1 id="collector-profile-title" className="mb-4 text-xl font-semibold md:text-2xl">
+      {/* O Figma usava escalas diferentes no título do formulário; ele acompanha os títulos lg do restante do checkout. */}
+      <h1 id="collector-profile-title" className="mb-4 text-lg font-semibold">
         Perfil do colecionador
       </h1>
       <form
         onSubmit={(event) => event.preventDefault()}
         className="grid gap-x-6 gap-y-5 md:grid-cols-2"
       >
+        {/* O Figma não diferenciava os dados do perfil no checkout; nome e e-mail existentes na sessão preenchem os campos equivalentes. */}
         <div className="space-y-5">
           <div className="space-y-2">
             <Label variant="checkout" htmlFor="display-name">
               Nome de exibição <RequiredMark />
             </Label>
-            <Input id="display-name" variant="checkout" />
+            <Input
+              id="display-name"
+              variant="checkout"
+              value={profileValues.displayName}
+              onChange={(event) =>
+                setProfileValues((current) => ({ ...current, displayName: event.target.value }))
+              }
+            />
           </div>
           <div className="space-y-2">
             <Label variant="checkout" htmlFor="checkout-network">
@@ -69,11 +97,20 @@ export function CollectorProfileForm() {
             <Label variant="checkout" htmlFor="collector-email">
               E-mail <RequiredMark />
             </Label>
-            <Input id="collector-email" type="email" variant="checkout" />
+            <Input
+              id="collector-email"
+              type="email"
+              variant="checkout"
+              value={profileValues.email}
+              onChange={(event) =>
+                setProfileValues((current) => ({ ...current, email: event.target.value }))
+              }
+            />
           </div>
-          <Label variant="checkout" htmlFor="another-wallet" className="cursor-pointer">
-            <Checkbox id="another-wallet" className="rounded-full border-2 border-primary" />
-            <span className="ml-1 mt-3">Usar outra carteira?</span>
+          <Label variant="checkout" htmlFor="another-wallet" className="cursor-pointer gap-3">
+            {/* No Figma, este controle era mais pesado e o texto ficava desalinhado; círculo e alinhamento seguem Carteira e rede. */}
+            <Checkbox id="another-wallet" className="rounded-full border-primary" />
+            <span>Usar outra carteira?</span>
           </Label>
           <div className="space-y-2">
             <Label variant="checkout" htmlFor="collector-note">
@@ -93,7 +130,14 @@ export function CollectorProfileForm() {
             <Label variant="checkout" htmlFor="profile-name">
               Nome do perfil <RequiredMark />
             </Label>
-            <Input id="profile-name" variant="checkout" />
+            <Input
+              id="profile-name"
+              variant="checkout"
+              value={profileValues.profileName}
+              onChange={(event) =>
+                setProfileValues((current) => ({ ...current, profileName: event.target.value }))
+              }
+            />
           </div>
           <div className="space-y-2">
             <Label className="mt-10" variant="checkout" htmlFor="secondary-wallet"></Label>
@@ -115,7 +159,8 @@ export function CollectorProfileForm() {
             </Label>
             <div className="flex">
               <Select defaultValue="eth">
-                <SelectTrigger aria-label="Sufixo ENS" variant="checkoutSuffix">
+                {/* O Figma mostrava o seletor ENS estreito e com raios diferentes; ele usa a mesma largura e forma dos outros selects. */}
+                <SelectTrigger aria-label="Sufixo ENS" variant="checkout">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

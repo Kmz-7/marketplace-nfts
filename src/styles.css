@@ -25,9 +25,6 @@
   --surface-dark-border: #55321f;
   --checkout-border: #3f2319;
   --required-marker: #f0805f;
-  --form-required-marker-size: 15px;
-  --newsletter-title-size: 17px;
-  --summary-medium-size: 15px;
   --secondary-foreground: var(--foreground);
   --muted: #241612;
   --muted-foreground: #cfb28c;
@@ -45,6 +42,8 @@
 @theme inline {
   --font-sans: var(--font-family);
   --font-mono: var(--font-family);
+  /* O Figma repetia tamanhos próximos; md reutiliza a medida base para manter a escala xs–xl uniforme. */
+  --text-md: 1rem;
   --color-background: var(--background);
   --color-near-white: var(--near-white);
   --color-foreground: var(--foreground);
@@ -59,9 +58,6 @@
   --color-surface-dark-border: var(--surface-dark-border);
   --color-checkout-border: var(--checkout-border);
   --color-required-marker: var(--required-marker);
-  --text-form-required: var(--form-required-marker-size);
-  --text-newsletter-title: var(--newsletter-title-size);
-  --text-summary-medium: var(--summary-medium-size);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
@@ -81,6 +77,77 @@
 * {
   box-sizing: border-box;
 }
+
+/* O Figma variava o enquadramento e o tamanho das imagens entre telas; estes papéis alinham banners, artes de exibição e miniaturas. */
+.image-banner {
+  object-fit: cover;
+}
+
+/* No Figma, a arte da Home deixava margens diferentes no eixo horizontal e vertical; a moldura quadrada usa respiro igual. */
+.image-standard {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.image-thumbnail {
+  width: 4rem;
+  height: 4rem;
+  flex: 0 0 4rem;
+  object-fit: cover;
+}
+
+/* Os indicadores do carrossel da Home eram menores que os do carrossel de produtos. */
+.carousel-indicator {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex: 0 0 0.75rem;
+  border-radius: 9999px;
+}
+
+/* Avisos de ações sobem com fade suave e respeitam a preferência por movimento reduzido. */
+.marketplace-toast-enter {
+  animation: marketplace-toast-enter 240ms ease-out both;
+}
+
+@keyframes marketplace-toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marketplace-toast-enter {
+    animation-duration: 1ms;
+  }
+}
+
+.auth-dialog-content {
+  /* O Figma deixava o modal alto e sem área rolável previsível; centralizar e limitar a altura preserva o foco em telas menores. */
+  top: 50%;
+  width: min(500px, calc(100vw - 2rem));
+  height: auto;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  padding-top: 30px;
+  padding-right: 30px;
+  padding-left: 30px;
+  padding-bottom: 30px;
+}
+
+.auth-dialog-content [data-slot='dialog-close'] {
+  color: var(--primary);
+}
+
+.auth-dialog-content [data-slot='dialog-close']:hover {
+  background: transparent;
+  color: var(--primary);
+}
+
 html {
   min-width: 320px;
   min-height: 100%;

@@ -1,4 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { AuthPage } from '@/pages/marketplace/pages/auth-page'
+import { validateAuthSearch } from '@/pages/marketplace/components/auth/auth-search'
+import { RegisterRoutePage } from '@/pages/marketplace/components/auth/register-route-page'
 
-export const Route = createFileRoute('/register')({ component: () => <AuthPage register /> })
+export const Route = createFileRoute('/register')({
+  validateSearch: validateAuthSearch,
+  component: RegisterRoutePage,
+})

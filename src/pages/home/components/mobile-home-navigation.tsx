@@ -1,4 +1,7 @@
 import { Button } from '@/components/ui/button'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useSession } from '@/hooks/use-auth'
+import { useAuthDialog } from '@/components/providers/auth-dialog-provider'
 import {
   HeartIcon,
   HomeIcon,
@@ -8,6 +11,10 @@ import {
 } from '@/components/ui/icons'
 
 export function MobileHomeNavigation() {
+  const navigate = useNavigate()
+  const session = useSession()
+  const { openAuthDialog } = useAuthDialog()
+
   return (
     <nav
       aria-label="Navegação mobile"
@@ -22,7 +29,16 @@ export function MobileHomeNavigation() {
       >
         <HomeIcon />
       </Button>
-      <Button render={<a href="/profile" />} variant="ghost" size="icon" aria-label="Favoritos">
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label="Favoritos"
+        onClick={() => {
+          if (session.data?.authenticated) void navigate({ to: '/favorites' })
+          else openAuthDialog()
+        }}
+      >
         <HeartIcon />
       </Button>
       <Button size="icon-lg" className="-mt-10 size-14 rounded-full" aria-label="Explorar">
@@ -31,9 +47,15 @@ export function MobileHomeNavigation() {
       <Button render={<a href="/cart" />} variant="ghost" size="icon" aria-label="Carrinho">
         <ShoppingCartIcon />
       </Button>
-      <Button render={<a href="/profile" />} variant="ghost" size="icon" aria-label="Perfil">
-        <UserRoundIcon />
-      </Button>
+      {session.data?.authenticated ? (
+        <Button render={<Link to="/profile" />} variant="ghost" size="icon" aria-label="Perfil">
+          <UserRoundIcon />
+        </Button>
+      ) : (
+        <Button type="button" variant="ghost" size="icon" aria-label="Entrar" onClick={() => openAuthDialog()}>
+          <UserRoundIcon />
+        </Button>
+      )}
     </nav>
   )
 }

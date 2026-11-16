@@ -73,10 +73,10 @@ export function WalletSettings() {
     <section aria-labelledby="wallet-settings-title">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 id="wallet-settings-title" className="text-xl font-semibold">
+          <h2 id="wallet-settings-title" className="text-lg font-semibold">
             Carteiras
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-md text-muted-foreground">
             Gerencie as carteiras usadas para comprar e receber NFTs.
           </p>
         </div>
@@ -88,8 +88,8 @@ export function WalletSettings() {
         <CardContent className="p-0">
           <div className="mb-5 flex items-center justify-between border-b border-border pb-4">
             <div>
-              <h3 className="text-base font-semibold">Carteira principal</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Selecionada para pagamentos</p>
+              <h3 className="text-lg font-semibold">Carteira principal</h3>
+              <p className="mt-1 text-xs text-muted-foreground">Selecionada para pagamentos</p>
             </div>
             <Badge variant="outline" className="border-primary text-primary">
               Principal
@@ -111,8 +111,8 @@ export function WalletSettings() {
       <Card className="mt-6 gap-0 rounded-sm border border-border bg-transparent p-5 shadow-none ring-0">
         <CardContent className="flex flex-wrap items-center justify-between gap-4 p-0">
           <div>
-            <h3 className="text-base font-semibold">Carteira secundária</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <h3 className="text-lg font-semibold">Carteira secundária</h3>
+            <p className="mt-1 text-md text-muted-foreground">
               Você ainda não adicionou uma carteira secundária.
             </p>
           </div>

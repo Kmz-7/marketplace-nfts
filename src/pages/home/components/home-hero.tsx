@@ -25,17 +25,18 @@ export function HomeHero() {
         >
           Explorar
         </Button>
+        {/* O Figma deixava os pontos do banner menores que os do carrossel de produtos; os indicadores compartilham agora a mesma medida. */}
         <div className="mt-8 flex justify-end gap-2 pr-3" aria-label="Slide 1 de 3">
-          <span className="size-1.5 rounded-full bg-primary" />
-          <span className="size-1.5 rounded-full bg-muted-foreground/40" />
-          <span className="size-1.5 rounded-full bg-muted-foreground/40" />
+          <span className="carousel-indicator bg-primary" />
+          <span className="carousel-indicator bg-muted-foreground/40" />
+          <span className="carousel-indicator bg-muted-foreground/40" />
         </div>
       </div>
       <div className="relative mx-auto w-full max-w-[450px] overflow-hidden rounded-3xl bg-card md:ml-auto">
         <img
           src="/assets/marketplace/ape-sunglasses.png"
           alt="NFT de macaco com óculos e jaqueta verde"
-          className="aspect-square w-full object-cover"
+          className="image-banner aspect-square w-full"
         />
       </div>
     </section>

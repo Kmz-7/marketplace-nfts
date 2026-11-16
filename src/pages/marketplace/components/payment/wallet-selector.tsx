@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { CompatibleWallets } from '@/components/compatible-wallets'
 
 type WalletSelectorProps = {
   value: string
@@ -10,36 +11,21 @@ type WalletSelectorProps = {
 
 export function WalletSelector({ value, onValueChange, onConfirm }: WalletSelectorProps) {
   return (
-    <section aria-labelledby="wallet-network-title">
+    <section aria-labelledby="wallet-network-title" className="space-y-3">
+      {/* No Figma, o título ficava distante das opções; o bloco agora antecede o selo e os controles. */}
+      <h2 id="wallet-network-title" className="text-lg font-semibold">
+        Carteira e rede
+      </h2>
+      {/* MetaMask · WalletConnect · Coinbase indica compatibilidade, não uma carteira selecionável. */}
+      <CompatibleWallets className="mx-auto w-full max-w-[283px]" />
       <RadioGroup value={value} onValueChange={onValueChange} className="gap-3">
-        <Label variant="compatibleWallets">
-          <RadioGroupItem value="compatibleWallets" variant="checkout" />
-          <span className="flex w-[283px] flex-row rounded-sm border border-surface-dark-border bg-surface-dark py-1 text-xs uppercase text-primary">
-            <span className="px-3">MetaMask</span>
-            <span className="text-muted-foreground">·</span>
-            <span className="px-3">WalletConnect</span>
-            <span className="text-muted-foreground">·</span>
-            <span className="px-2 pe-0">Coinbase</span>
-          </span>
-        </Label>
         {['MetaMask', 'Coinbase Wallet'].map((wallet) => (
-          <Label
-            key={wallet}
-            variant={wallet === 'MetaMask' ? 'walletOptionMetaMask' : 'walletOptionCoinbase'}
-          >
+          <Label key={wallet} variant="walletOption">
             <RadioGroupItem
               value={wallet === 'MetaMask' ? 'metamask' : 'coinbase'}
               variant="checkout"
             />
-            <span
-              className={
-                wallet === 'MetaMask'
-                  ? 'mt-1 flex flex-1 items-center'
-                  : 'mt-1 ms-7 flex flex-1 items-center'
-              }
-            >
-              {wallet}
-            </span>
+            <span className="flex flex-1 items-center">{wallet}</span>
           </Label>
         ))}
       </RadioGroup>

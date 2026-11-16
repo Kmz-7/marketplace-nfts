@@ -66,7 +66,7 @@ export function RelatedProducts({ title }: { title: string }) {
   return (
     <section className="mt-16" aria-label={title}>
       <div className="border-b border-border pb-3">
-        <h2 className="text-sm font-semibold text-primary">{title}</h2>
+        <h2 className="text-lg font-semibold text-primary">{title}</h2>
       </div>
       <div
         ref={listRef}
@@ -97,11 +97,11 @@ export function RelatedProducts({ title }: { title: string }) {
               aria-label={`Mostrar grupo ${index + 1} de ${pageStarts.length}`}
               aria-pressed={activePage === index}
               onClick={() => goToPage(index)}
-              className="size-6 rounded-full border-0 p-0 hover:bg-transparent"
+              className="size-6 rounded-lg border-0 p-0 hover:bg-transparent"
             >
               <span
                 aria-hidden="true"
-                className={`rounded-full border border-primary size-3 transition-all ${activePage === index ? 'bg-primary' : 'bg-transparent'}`}
+                className={`carousel-indicator border border-primary transition-all ${activePage === index ? 'bg-primary' : 'bg-transparent'}`}
               />
             </Button>
           ))}

@@ -1,5 +1,7 @@
+import { TriangleAlert } from 'lucide-react'
 import { ChevronRightIcon } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Pagination, PaginationContent, PaginationItem } from '@/components/ui/pagination'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -92,7 +94,7 @@ export function HomeCatalog({
           </div>
           <TabsContent value={activeTab} className="mt-0">
             <div
-              className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:gap-x-8 lg:gap-y-[72px]"
+              className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:gap-x-8 lg:gap-y-18"
               aria-busy={isPending}
             >
               {isPending &&
@@ -100,14 +102,23 @@ export function HomeCatalog({
                   <Skeleton key={index} className="aspect-square w-full rounded-2xl" />
                 ))}
               {isError && (
-                <p role="alert" className="col-span-full py-8 text-sm text-muted-foreground">
-                  Não foi possível carregar os NFTs. Atualize a página para tentar novamente.
-                </p>
+                /* No Figma, o erro aparecia como texto solto; o aviso usa fundo e borda discreta do sistema. */
+                <Alert className="col-span-full border-border bg-card py-4 text-secondary-foreground">
+                  <TriangleAlert className="size-4 text-primary" aria-hidden="true" />
+                  <AlertDescription className="text-md text-secondary-foreground">
+                    Não foi possível carregar os NFTs. Atualize a página para tentar novamente.
+                  </AlertDescription>
+                </Alert>
               )}
               {!isPending && !isError && nfts.length === 0 && (
-                <p className="col-span-full py-8 text-sm text-muted-foreground">
-                  Nenhum NFT encontrado.
-                </p>
+                /* A borda sutil mantém o mesmo tratamento visual nos filtros sem resultados e nos erros de carregamento. */
+                <Alert className="col-span-full border-border bg-card py-4 text-secondary-foreground">
+                  <TriangleAlert className="size-4 text-muted-foreground" aria-hidden="true" />
+                  <AlertDescription className="text-md text-secondary-foreground">
+                    Nenhum NFT encontrado para os filtros aplicados. Ajuste os filtros e tente
+                    novamente.
+                  </AlertDescription>
+                </Alert>
               )}
               {!isPending && !isError && nfts.map((nft) => <HomeNftCard key={nft.name} {...nft} />)}
             </div>

@@ -12,11 +12,9 @@ const labelVariants = cva(
         default: 'gap-2 font-medium',
         checkout: 'gap-1 font-normal',
         cartCoupon: 'mt-4 block leading-4',
-        newsletterTitle: 'gap-2 text-newsletter-title leading-4 font-bold',
-        walletOptionMetaMask:
+        newsletterTitle: 'gap-2 text-lg leading-4 font-bold',
+        walletOption:
           'cursor-pointer justify-start gap-3 rounded-sm border border-checkout-border bg-transparent px-4 py-3 text-sm',
-        walletOptionCoinbase:
-          'cursor-pointer justify-start gap-0 rounded-sm border border-checkout-border bg-transparent px-4 py-3 text-sm',
         compatibleWallets:
           'cursor-pointer justify-start gap-3 rounded-sm border border-checkout-border bg-transparent px-3 py-2',
       },
@@ -39,7 +37,7 @@ function RequiredMark() {
   return (
     <span
       aria-hidden="true"
-      className="text-form-required leading-none text-required-marker text-xl!"
+      className="text-lg! leading-none text-required-marker"
     >
       *
     </span>

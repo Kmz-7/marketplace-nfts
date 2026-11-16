@@ -1,32 +1,47 @@
 import { Star } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { HeartIcon } from '@/components/ui/icons'
 import { QuantityButton } from '@/components/ui/quantity-button'
 import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
+import type { MarketplaceNft } from '@/components/providers/marketplace-state-provider'
 
 type NftPurchasePanelProps = {
   quantity: number
+  nft: MarketplaceNft
+  selectedEdition: string
+  isEditionLoading: boolean
   isFavorite: boolean
   shareUrl: string
   onQuantityChange: (quantity: number) => void
+  onEditionChange: (edition: string) => void
   onFavoriteChange: () => void
+  onBuy: () => void
 }
 
 export function NftPurchasePanel({
   quantity,
+  nft,
+  selectedEdition,
+  isEditionLoading,
   isFavorite,
   shareUrl,
   onQuantityChange,
+  onEditionChange,
   onFavoriteChange,
+  onBuy,
 }: NftPurchasePanelProps) {
   return (
     <Card className="gap-0 rounded-2xl bg-card p-5 ring-0 md:bg-transparent md:p-0">
       <CardContent className="p-0">
-        <h1 className="text-lg font-bold md:text-2xl">Emerald Ape #042</h1>
+        <h1 className="text-lg font-bold">{nft.name}</h1>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
-          <p className="text-xl font-bold text-primary">1.19 ETH</p>
+          {isEditionLoading ? (
+            <Skeleton className="h-6 w-24" />
+          ) : (
+            <p className="text-lg font-bold text-primary">{nft.price} ETH</p>
+          )}
           <div
             className="flex flex-wrap items-center gap-2"
             aria-label="Avaliação de 4 de 5 estrelas, 19 avaliações de colecionadores"
@@ -35,7 +50,7 @@ export function NftPurchasePanel({
               {[0, 1, 2, 3, 4].map((star) => (
                 <Star
                   key={star}
-                  className={`size-4 ${star < 4 ? 'fill-primary text-primary' : 'fill-[#CFB28C] text-[#CFB28C]'}`}
+                  className={`size-4 ${star < 4 ? 'fill-primary text-primary' : 'fill-muted-foreground text-muted-foreground'}`}
                 />
               ))}
             </span>
@@ -45,26 +60,33 @@ export function NftPurchasePanel({
 
         <Separator className="my-2 bg-border" />
 
-        <section aria-labelledby="about-nft-title">
-          <h2 id="about-nft-title" className="text-[15px] font-semibold text-foreground">
+        {/* No Figma, o espaçamento entre título e descrição variava; a pilha padroniza ambos em 12 px. */}
+        <section aria-labelledby="about-nft-title" className="space-y-3">
+          <h2 id="about-nft-title" className="text-lg font-semibold text-foreground">
             Sobre este NFT:
           </h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Um colecionável digital finalizado à mão da coleção Kurio Editions, verificado na
-            Ethereum, com arte desbloqueável e acesso para colecionadores.
+          <p className="text-md leading-6 text-muted-foreground">
+            Um colecionável digital finalizado à mão por {nft.creator}, verificado na Ethereum,
+            com arte desbloqueável e acesso para colecionadores.
           </p>
         </section>
 
-        <h2 className="mt-2 text-md font-semibold">Edição:</h2>
+        {/* No Figma, as edições tinham aparência estática; controles selecionáveis e skeleton curto deixam a troca perceptível. */}
+        <h2 className="mt-2 text-xs font-semibold">Edição:</h2>
+        {/* O Figma mostrava raios inconsistentes nos seletores de edição; rounded-lg mantém laterais retas e o mesmo raio em todas as opções. */}
         <div className="mt-3 flex flex-wrap gap-2">
-          {['1/1', '1/10', '1/50', 'ABERTA'].map((edition, index) => (
-            <Badge
+          {['1/1', '1/10', '1/50', 'ABERTA'].map((edition) => (
+            <Button
               key={edition}
+              type="button"
               variant="outline"
-              className={`h-9 w-fit rounded-[50%] px-2.5 text-[13px] font-medium ${index === 2 ? 'border-primary text-primary' : 'border-surface-dark-border text-muted-foreground'}`}
+              aria-pressed={selectedEdition === edition}
+              disabled={isEditionLoading}
+              onClick={() => onEditionChange(edition)}
+              className={`h-8 rounded-lg px-2.5 text-xs font-medium ${selectedEdition === edition ? 'border-primary text-primary' : 'border-surface-dark-border text-muted-foreground'}`}
             >
               {edition}
-            </Badge>
+            </Button>
           ))}
         </div>
 
@@ -74,9 +96,10 @@ export function NftPurchasePanel({
               action="decrease"
               scale="large"
               label="Diminuir quantidade"
+              disabled={quantity <= 1}
               onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
             />
-            <span className="min-w-4 text-center text-xl">{quantity}</span>
+            <span className="min-w-4 text-center text-md">{quantity}</span>
             <QuantityButton
               action="increase"
               scale="large"
@@ -85,7 +108,7 @@ export function NftPurchasePanel({
             />
           </div>
           <div className="flex items-center gap-2">
-            <Button render={<a href="/payment" />} className="h-12 w-[124px] rounded-lg px-4">
+            <Button type="button" onClick={onBuy} className="h-12 w-[124px] rounded-lg px-4">
               Comprar
             </Button>
             <Button
@@ -102,11 +125,12 @@ export function NftPurchasePanel({
         </div>
 
         <div className="mt-3 space-y-2 text-xs leading-5 text-muted-foreground">
-          <p>ID: #0042</p>
-          <p>Coleção: Kurio Apes</p>
+          <p>ID: {nft.tokenId}</p>
+          <p>Coleção: {nft.collection ?? 'Kurio Editions'}</p>
           <p>Atributos: Óculos, Esmeralda, Raro</p>
-          <div className="flex flex-wrap items-center gap-0">
-            <span className="text-sm font-semibold text-foreground">Compartilhar este NFT:</span>
+          {/* No exemplo do Figma, os ícones de compartilhamento ficavam encostados e variavam de tamanho; gap-1 e size-4 uniformizam a fileira. */}
+          <div className="flex flex-wrap items-center gap-1">
+            <span className="text-xs font-semibold text-foreground">Compartilhar este NFT:</span>
             <Button
               render={
                 <a
@@ -120,7 +144,7 @@ export function NftPurchasePanel({
               aria-label="Compartilhar no LinkedIn"
               className="size-7 p-1 hover:bg-transparent"
             >
-              <img src="/assets/social/share-linkedin.svg" alt="" className="size-full" />
+              <img src="/assets/social/share-linkedin.svg" alt="" className="size-4" />
             </Button>
             <Button
               render={<a href="mailto:?subject=Emerald%20Ape%20%23042&body=Confira%20este%20NFT" />}
@@ -129,7 +153,7 @@ export function NftPurchasePanel({
               aria-label="Compartilhar por e-mail"
               className="size-7 p-1 hover:bg-transparent"
             >
-              <img src="/assets/social/share-email.svg" alt="" className="size-full" />
+              <img src="/assets/social/share-email.svg" alt="" className="size-4" />
             </Button>
             <Button
               render={
@@ -144,7 +168,7 @@ export function NftPurchasePanel({
               aria-label="Compartilhar no Twitter"
               className="size-7 p-1 hover:bg-transparent"
             >
-              <img src="/assets/social/share-twitter.svg" alt="" className="size-full" />
+              <img src="/assets/social/share-twitter.svg" alt="" className="size-4" />
             </Button>
           </div>
         </div>
