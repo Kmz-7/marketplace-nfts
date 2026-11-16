@@ -1,10 +1,10 @@
 import type { NftContract } from '@/types/nft.contracts'
 
 const images = [
-  '/assets/marketplace/ape-sunglasses.png',
-  '/assets/marketplace/ape-explorer.png',
-  '/assets/marketplace/ape-cream-coat.png',
-  '/assets/marketplace/ape-headphones.png',
+  '/assets/marketplace/ape-sunglasses.webp',
+  '/assets/marketplace/ape-explorer.webp',
+  '/assets/marketplace/ape-cream-coat.webp',
+  '/assets/marketplace/ape-headphones.webp',
 ]
 
 const records = [

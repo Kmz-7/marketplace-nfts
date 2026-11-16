@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { marketplaceImageSrcSet } from '@/lib/responsive-image'
 
 export function HomeHero() {
   return (
@@ -26,7 +27,7 @@ export function HomeHero() {
           Explorar
         </Button>
         {/* O Figma deixava os pontos do banner menores que os do carrossel de produtos; os indicadores compartilham agora a mesma medida. */}
-        <div className="mt-8 flex justify-end gap-2 pr-3" aria-label="Slide 1 de 3">
+        <div className="mt-8 flex justify-end gap-2 pr-3" role="group" aria-label="Slide 1 de 3">
           <span className="carousel-indicator bg-primary" />
           <span className="carousel-indicator bg-muted-foreground/40" />
           <span className="carousel-indicator bg-muted-foreground/40" />
@@ -34,9 +35,12 @@ export function HomeHero() {
       </div>
       <div className="relative mx-auto w-full max-w-[450px] overflow-hidden rounded-3xl bg-card md:ml-auto">
         <img
-          src="/assets/marketplace/ape-sunglasses.png"
+          src="/assets/marketplace/ape-sunglasses.webp"
+          srcSet={marketplaceImageSrcSet('/assets/marketplace/ape-sunglasses.webp')}
+          sizes="(max-width: 767px) 32vw, 450px"
           alt="NFT de macaco com óculos e jaqueta verde"
           className="image-banner aspect-square w-full"
+          fetchPriority="high"
         />
       </div>
     </section>

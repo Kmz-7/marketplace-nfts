@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label, RequiredMark } from '@/components/ui/label'
@@ -12,23 +12,25 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { useSession } from '@/hooks/use-auth'
 
-export function CollectorProfileForm() {
+export function CollectorProfileForm({
+  network,
+  onNetworkChange,
+}: {
+  network: 'ethereum' | 'polygon' | 'solana'
+  onNetworkChange: (network: 'ethereum' | 'polygon' | 'solana') => void
+}) {
   const session = useSession()
   const user = session.data?.user
-  const [profileValues, setProfileValues] = useState({
-    displayName: '',
-    email: '',
-    profileName: '',
-  })
-
-  useEffect(() => {
-    if (!user) return
-    setProfileValues((current) => ({
-      displayName: current.displayName || user.name,
-      email: current.email || user.email,
-      profileName: current.profileName || user.name,
-    }))
-  }, [user?.email, user?.id, user?.name])
+  const [profileOverrides, setProfileOverrides] = useState<{
+    displayName?: string
+    email?: string
+    profileName?: string
+  }>({})
+  const profileValues = {
+    displayName: profileOverrides.displayName ?? user?.name ?? '',
+    email: profileOverrides.email ?? user?.email ?? '',
+    profileName: profileOverrides.profileName ?? user?.name ?? '',
+  }
 
   return (
     <section aria-labelledby="collector-profile-title" className="min-w-0">
@@ -51,7 +53,7 @@ export function CollectorProfileForm() {
               variant="checkout"
               value={profileValues.displayName}
               onChange={(event) =>
-                setProfileValues((current) => ({ ...current, displayName: event.target.value }))
+                setProfileOverrides((current) => ({ ...current, displayName: event.target.value }))
               }
             />
           </div>
@@ -59,16 +61,14 @@ export function CollectorProfileForm() {
             <Label variant="checkout" htmlFor="checkout-network">
               Rede <RequiredMark />
             </Label>
-            <Select defaultValue="Selecione uma rede">
+            <Select value={network} onValueChange={(value) => onNetworkChange(value as typeof network)}>
               <SelectTrigger variant="checkout" id="checkout-network">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="default" disabled>
-                  Selecione uma rede
-                </SelectItem>
                 <SelectItem value="ethereum">Ethereum</SelectItem>
                 <SelectItem value="polygon">Polygon</SelectItem>
+                <SelectItem value="solana">Solana</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -103,7 +103,7 @@ export function CollectorProfileForm() {
               variant="checkout"
               value={profileValues.email}
               onChange={(event) =>
-                setProfileValues((current) => ({ ...current, email: event.target.value }))
+                setProfileOverrides((current) => ({ ...current, email: event.target.value }))
               }
             />
           </div>
@@ -135,7 +135,7 @@ export function CollectorProfileForm() {
               variant="checkout"
               value={profileValues.profileName}
               onChange={(event) =>
-                setProfileValues((current) => ({ ...current, profileName: event.target.value }))
+                setProfileOverrides((current) => ({ ...current, profileName: event.target.value }))
               }
             />
           </div>

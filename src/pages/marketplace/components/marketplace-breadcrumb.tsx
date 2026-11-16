@@ -11,9 +11,11 @@ import {
 export function MarketplaceBreadcrumb({
   currentPage,
   className,
+  includeMarket = true,
 }: {
   currentPage?: string
   className?: string
+  includeMarket?: boolean
 }) {
   return (
     <Breadcrumb aria-label="Caminho de navegação" className={className}>
@@ -26,10 +28,15 @@ export function MarketplaceBreadcrumb({
             Início
           </BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator>/</BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <span className="text-foreground">Mercado</span>
-        </BreadcrumbItem>
+        {/* No Figma, as rotas editoriais seguem de Início direto à seção; o passo Mercado fica opcional. */}
+        {includeMarket && (
+          <>
+            <BreadcrumbSeparator>/</BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <span className="text-foreground">Mercado</span>
+            </BreadcrumbItem>
+          </>
+        )}
         {currentPage && (
           <>
             <BreadcrumbSeparator>/</BreadcrumbSeparator>

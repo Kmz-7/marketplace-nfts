@@ -10,9 +10,9 @@ export function LearnPage() {
 
   return (
     <main className="py-8 md:py-10">
-      <MarketplaceBreadcrumb currentPage="Aprenda" className="mb-8 text-xs" />
+      <MarketplaceBreadcrumb currentPage="Aprenda" includeMarket={false} className="mb-8 text-xs" />
       <article className="mx-auto w-full max-w-4xl space-y-5">
-        <img src={article.image} alt="" className="image-banner aspect-video w-full rounded-xl object-cover" />
+        <img src={article.image} alt="" fetchPriority="high" className="image-banner aspect-video w-full rounded-xl object-cover" />
         <header className="space-y-3">
           <p className="text-xs text-muted-foreground">{article.date} · {article.readTime}</p>
           <h1 className="text-lg font-semibold text-foreground">{article.title}</h1>

@@ -1,4 +1,4 @@
-import { Star } from 'lucide-react'
+import { ShoppingCart, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { HeartIcon } from '@/components/ui/icons'
@@ -33,10 +33,17 @@ export function NftPurchasePanel({
   onBuy,
 }: NftPurchasePanelProps) {
   return (
-    <Card className="gap-0 rounded-2xl bg-card p-5 ring-0 md:bg-transparent md:p-0">
+    // No Figma mobile, a folha de detalhes ocupa a largura toda e sobrepõe a base da arte.
+    <Card className="relative -mx-7 -mt-14 gap-0 rounded-none rounded-t-3xl bg-card px-6 pt-8 pb-6 ring-0 md:mx-0 md:mt-0 md:rounded-xl md:bg-transparent md:p-0">
       <CardContent className="p-0">
-        <h1 className="text-lg font-bold">{nft.name}</h1>
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="text-xl font-bold md:text-lg">{nft.name}</h1>
+          <span className="flex shrink-0 items-center gap-1 rounded-full border border-primary px-2 py-1 text-sm font-medium text-foreground md:hidden">
+            <Star className="size-3 fill-primary text-primary" aria-hidden="true" />
+            4.8 (19)
+          </span>
+        </div>
+        <div className="mt-3 hidden flex-wrap items-center justify-between gap-4 md:flex">
           {isEditionLoading ? (
             <Skeleton className="h-6 w-24" />
           ) : (
@@ -58,21 +65,25 @@ export function NftPurchasePanel({
           </div>
         </div>
 
-        <Separator className="my-2 bg-border" />
+        <Separator className="my-2 hidden bg-border md:block" />
 
         {/* No Figma, o espaçamento entre título e descrição variava; a pilha padroniza ambos em 12 px. */}
-        <section aria-labelledby="about-nft-title" className="space-y-3">
-          <h2 id="about-nft-title" className="text-lg font-semibold text-foreground">
+        <section aria-labelledby="about-nft-title" className="mt-3 space-y-3 md:mt-0">
+          <h2 id="about-nft-title" className="hidden text-lg font-semibold text-foreground md:block">
             Sobre este NFT:
           </h2>
-          <p className="text-md leading-6 text-muted-foreground">
+          <p className="text-sm leading-6 text-muted-foreground md:hidden">
+            Um colecionável digital {selectedEdition} finalizado à mão da coleção Kurio Editions,
+            verificado na Ethereum.
+          </p>
+          <p className="hidden text-md leading-6 text-muted-foreground md:block">
             Um colecionável digital finalizado à mão por {nft.creator}, verificado na Ethereum,
             com arte desbloqueável e acesso para colecionadores.
           </p>
         </section>
 
         {/* No Figma, as edições tinham aparência estática; controles selecionáveis e skeleton curto deixam a troca perceptível. */}
-        <h2 className="mt-2 text-xs font-semibold">Edição:</h2>
+        <h2 className="mt-5 text-md font-bold md:text-xs md:font-semibold">Edição:</h2>
         {/* O Figma mostrava raios inconsistentes nos seletores de edição; rounded-lg mantém laterais retas e o mesmo raio em todas as opções. */}
         <div className="mt-3 flex flex-wrap gap-2">
           {['1/1', '1/10', '1/50', 'ABERTA'].map((edition) => (
@@ -83,14 +94,14 @@ export function NftPurchasePanel({
               aria-pressed={selectedEdition === edition}
               disabled={isEditionLoading}
               onClick={() => onEditionChange(edition)}
-              className={`h-8 rounded-lg px-2.5 text-xs font-medium ${selectedEdition === edition ? 'border-primary text-primary' : 'border-surface-dark-border text-muted-foreground'}`}
+              className={`h-7 rounded-lg px-2.5 text-sm font-medium md:h-8 md:text-xs ${selectedEdition === edition ? 'border-primary text-link md:text-primary' : 'border-surface-dark-border text-muted-foreground'}`}
             >
               {edition}
             </Button>
           ))}
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-6 hidden flex-wrap items-center justify-between gap-3 md:flex">
           <div className="flex items-center gap-4">
             <QuantityButton
               action="decrease"
@@ -124,12 +135,16 @@ export function NftPurchasePanel({
           </div>
         </div>
 
-        <div className="mt-3 space-y-2 text-xs leading-5 text-muted-foreground">
-          <p>ID: {nft.tokenId}</p>
+        {/* Metadados mobile em 15 px no Figma (normalizado para md) com tom secundário mais apagado. */}
+        <div className="mt-5 space-y-3 text-md text-muted-foreground/70 md:mt-3 md:space-y-2 md:text-xs md:leading-5 md:text-muted-foreground">
+          <p>
+            <span className="md:hidden">ID do token:</span>
+            <span className="hidden md:inline">ID:</span> {nft.tokenId}
+          </p>
           <p>Coleção: {nft.collection ?? 'Kurio Editions'}</p>
           <p>Atributos: Óculos, Esmeralda, Raro</p>
           {/* No exemplo do Figma, os ícones de compartilhamento ficavam encostados e variavam de tamanho; gap-1 e size-4 uniformizam a fileira. */}
-          <div className="flex flex-wrap items-center gap-1">
+          <div className="hidden flex-wrap items-center gap-1 md:flex">
             <span className="text-xs font-semibold text-foreground">Compartilhar este NFT:</span>
             <Button
               render={
@@ -174,5 +189,64 @@ export function NftPurchasePanel({
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+export function MobileNftActionBar({
+  quantity,
+  price,
+  onQuantityChange,
+  onBuy,
+  onAddToCart,
+}: {
+  quantity: number
+  price: string
+  onQuantityChange: (quantity: number) => void
+  onBuy: () => void
+  onAddToCart: () => void
+}) {
+  return (
+    <aside
+      aria-label="Ações de compra"
+      className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-lg rounded-t-3xl bg-card px-6 pt-5 pb-9 shadow-xl md:hidden"
+    >
+      {/* O Figma reserva um rodapé de compra fixo no detalhe mobile; as quantidades e o preço ficam visíveis junto das ações. */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <span className="text-md font-medium text-muted-foreground">Qtd.</span>
+          <QuantityButton
+            action="decrease"
+            scale="large"
+            label="Diminuir quantidade"
+            disabled={quantity <= 1}
+            onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
+          />
+          <span className="min-w-4 text-center text-lg font-medium">{quantity}</span>
+          <QuantityButton
+            action="increase"
+            scale="large"
+            label="Aumentar quantidade"
+            onClick={() => onQuantityChange(quantity + 1)}
+          />
+        </div>
+        <span className="text-xl font-bold text-link">{price} ETH</span>
+      </div>
+      {/* O Figma usa CTA em pílula de 60 px e carrinho circular; o projeto mantém rounded-lg. */}
+      <div className="mt-5 flex gap-3">
+        <Button type="button" variant="gradient" size="cta" onClick={onBuy} className="flex-1">
+          Comprar NFT
+        </Button>
+        <Button
+          type="button"
+          variant="surface"
+          size="icon"
+          aria-label="Adicionar ao carrinho"
+          className="size-12"
+          onClick={onAddToCart}
+        >
+          <ShoppingCart className="size-4" aria-hidden="true" />
+        </Button>
+      </div>
+    </aside>
   )
 }

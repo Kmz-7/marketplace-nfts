@@ -1,4 +1,5 @@
 import { nftFixtures } from '@/mocks/fixtures/nft.fixtures'
+import { formatEth, parseEth } from '@/lib/eth'
 import type { NftContract, NftUpdatedEvent } from '@/types/nft.contracts'
 
 let nfts = copyFixtures()
@@ -21,7 +22,21 @@ export function getNft(id: string) {
 export function updateNft(id: string, changes: Partial<Pick<NftContract, 'priceEth' | 'available'>>) {
   const index = nfts.findIndex((nft) => nft.id === id)
   if (index < 0) return undefined
-  nfts[index] = { ...nfts[index], ...changes }
+  const current = nfts[index]
+  const editionPricesEth =
+    changes.priceEth && current.priceEth !== '0'
+      ? Object.fromEntries(
+          Object.entries(current.editionPricesEth ?? {}).map(([editionId, price]) => [
+            editionId,
+            formatEth((parseEth(price) * parseEth(changes.priceEth!)) / parseEth(current.priceEth)),
+          ]),
+        )
+      : current.editionPricesEth
+  nfts[index] = {
+    ...current,
+    ...changes,
+    ...(editionPricesEth ? { editionPricesEth } : {}),
+  }
   version += 1
   const event: NftUpdatedEvent = {
     eventId: `nft.updated:${id}:${version}`,

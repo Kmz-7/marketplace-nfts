@@ -1,11 +1,24 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
+import { Suspense, createContext, lazy, useCallback, useContext, useState, type ReactNode } from 'react'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
-import { DesktopAuthDialog } from '@/pages/marketplace/components/auth/desktop-auth-dialog'
 import { clearPendingMarketplaceAction } from '@/lib/pending-marketplace-action'
+import { useIsMobile } from '@/hooks/use-mobile'
+
+const DesktopAuthDialog = lazy(() =>
+  import('@/pages/marketplace/components/auth/desktop-auth-dialog').then((module) => ({
+    default: module.DesktopAuthDialog,
+  })),
+)
 
 type AuthDialogContextValue = {
-  openAuthDialog: (options?: { register?: boolean; continueToPayment?: boolean }) => void
+  openAuthDialog: (options?: { register?: boolean; continueToPayment?: boolean; coupon?: string }) => void
 }
+
+// O mobile usa as telas Mobile / Login e Mobile / Cadastro do Figma, em tela cheia, e não o diálogo compacto do desktop.
+const MobileAuthDialog = lazy(() =>
+  import('@/pages/marketplace/components/auth/mobile-auth-dialog').then((module) => ({
+    default: module.MobileAuthDialog,
+  })),
+)
 
 const AuthDialogContext = createContext<AuthDialogContextValue | null>(null)
 
@@ -15,11 +28,15 @@ export function AuthDialogProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
   const [register, setRegister] = useState(false)
   const [continueToPayment, setContinueToPayment] = useState(false)
+  const [paymentCoupon, setPaymentCoupon] = useState('')
+  const isMobile = useIsMobile()
+  const AuthDialog = isMobile ? MobileAuthDialog : DesktopAuthDialog
 
   const openAuthDialog = useCallback(
-    (options?: { register?: boolean; continueToPayment?: boolean }) => {
+    (options?: { register?: boolean; continueToPayment?: boolean; coupon?: string }) => {
       setRegister(options?.register ?? false)
       setContinueToPayment(options?.continueToPayment ?? false)
+      setPaymentCoupon(options?.coupon ?? '')
       setIsOpen(true)
     },
     [],
@@ -32,20 +49,26 @@ export function AuthDialogProvider({ children }: { children: ReactNode }) {
 
   const handleSuccess = () => {
     setIsOpen(false)
-    if (continueToPayment) void navigate({ to: '/payment' })
+    if (continueToPayment) {
+      void navigate({ to: '/payment', search: { coupon: paymentCoupon || undefined } })
+    }
   }
 
   return (
     <AuthDialogContext.Provider value={{ openAuthDialog }}>
       {children}
-      <DesktopAuthDialog
-        open={isOpen}
-        register={register}
-        returnTo={currentHref}
-        onOpenChange={handleOpenChange}
-        onRegisterChange={setRegister}
-        onSuccess={handleSuccess}
-      />
+      {isOpen && (
+        <Suspense fallback={null}>
+          <AuthDialog
+            open={isOpen}
+            register={register}
+            returnTo={currentHref}
+            onOpenChange={handleOpenChange}
+            onRegisterChange={setRegister}
+            onSuccess={handleSuccess}
+          />
+        </Suspense>
+      )}
     </AuthDialogContext.Provider>
   )
 }

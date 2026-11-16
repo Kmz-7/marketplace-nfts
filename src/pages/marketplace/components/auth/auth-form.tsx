@@ -5,23 +5,34 @@ import { Card } from '@/components/ui/card'
 import { AuthFormFields } from './auth-form-fields'
 import { useAuthForm } from './use-auth-form'
 
-export function AuthForm({ register, returnTo }: { register: boolean; returnTo?: string }) {
+export function AuthForm({
+  register,
+  returnTo,
+  onRegisterChange,
+  onSuccess,
+}: {
+  register: boolean
+  returnTo?: string
+  onRegisterChange?: (register: boolean) => void
+  onSuccess?: () => void
+}) {
   const navigate = useNavigate()
-  const authForm = useAuthForm(register, returnTo)
+  const authForm = useAuthForm(register, returnTo, onSuccess)
 
   return (
-    <Card className="flex min-h-[85vh] w-full flex-col justify-center gap-0 rounded-none bg-transparent py-10 ring-0 md:min-h-0 md:rounded-lg md:p-8">
+    <Card className="flex min-h-dvh w-full flex-col items-center justify-start gap-0 rounded-none border-0 bg-transparent px-7 pt-32 pb-6 shadow-none ring-0 md:min-h-0 md:justify-center md:rounded-lg md:p-8">
       <Button
         render={<a href="/" />}
         variant="ghost"
-        className="h-auto p-0 text-lg font-bold tracking-[0.15em] hover:bg-transparent"
+        className="brand-logo h-auto p-0 hover:bg-transparent"
       >
         KURIO
       </Button>
-      <h1 className="mt-16 text-center text-lg font-semibold md:mt-8">
+      {/* O Figma posiciona a marca no mesmo ponto nas duas telas mobile; a pilha usa espaçamento próprio em vez do modal desktop. */}
+      <h1 className={`mt-24 text-center font-bold md:mt-8 ${register ? 'text-lg' : 'text-xl'}`}>
         {register ? 'Criar perfil de colecionador' : 'Entrar'}
       </h1>
-      <form noValidate className="mt-8 space-y-3" onSubmit={authForm.handleSubmit}>
+      <form noValidate className="mt-8 w-full space-y-3" onSubmit={authForm.handleSubmit}>
         <AuthFormFields
           register={register}
           variant="auth"
@@ -38,56 +49,60 @@ export function AuthForm({ register, returnTo }: { register: boolean; returnTo?:
           </p>
         )}
         {!register && (
-          <Button
-            type="button"
-            variant="link"
-            className="h-auto p-0 text-xs text-primary"
-            onClick={() =>
-              toast.info('A recuperação de senha não está disponível nesta simulação.')
-            }
-          >
-            Esqueceu a senha?
-          </Button>
+          // No Figma, o link de recuperação fica alinhado à direita, sob o campo de senha.
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              variant="link"
+              className="h-auto p-0 text-sm font-normal text-link"
+              onClick={() =>
+                toast.info('A recuperação de senha não está disponível nesta simulação.')
+              }
+            >
+              Esqueceu a senha?
+            </Button>
+          </div>
         )}
-        <Button type="submit" className="mt-6 h-14 w-full" disabled={authForm.isPending}>
+        <Button type="submit" size="cta" className="mt-7" disabled={authForm.isPending}>
           {authForm.isPending ? 'Aguarde...' : register ? 'Criar perfil' : 'Entrar'}
         </Button>
       </form>
-      <div className="mt-10 flex items-center gap-3 text-xs">
+      <div className="mt-10 flex w-full items-center gap-3 text-sm">
         <span className="h-px flex-1 bg-border" />
         Ou continue com
         <span className="h-px flex-1 bg-border" />
       </div>
-      <div className="mt-4 grid gap-3">
+      {/* Marcas Google e Facebook exportadas do Figma: não há ícones equivalentes no Lucide nem no iconsax. */}
+      <div className="mt-3 grid w-full gap-4">
         <Button
           type="button"
           variant="outline"
-          className="h-10"
+          className="h-10 gap-3 border-checkout-border bg-transparent text-sm text-muted-foreground dark:bg-transparent"
           onClick={() => toast.info('O acesso com Google não está disponível nesta simulação.')}
         >
+          <img src="/assets/social/google.svg" alt="" className="size-5" />
           Continuar com Google
         </Button>
         <Button
           type="button"
           variant="outline"
-          className="h-10"
+          className="h-10 gap-3 border-checkout-border bg-transparent text-sm text-muted-foreground dark:bg-transparent"
           onClick={() => toast.info('O acesso com Facebook não está disponível nesta simulação.')}
         >
+          <img src="/assets/social/facebook-brand.svg" alt="" className="size-5" />
           Continuar com Facebook
         </Button>
       </div>
-      <p className="mt-10 text-center text-xs text-muted-foreground">
+      <p className="mt-10 text-center text-md text-muted-foreground">
         {register ? 'Já tem uma conta?' : 'Novo na Kurio?'}{' '}
         <Button
           type="button"
           variant="link"
-          className="h-auto p-0 text-xs font-normal text-foreground"
-          onClick={() =>
-            void navigate({
-              to: register ? '/login' : '/register',
-              search: { returnTo },
-            })
-          }
+          className="h-auto p-0 text-md font-normal text-foreground"
+          onClick={() => {
+            if (onRegisterChange) onRegisterChange(!register)
+            else void navigate({ to: register ? '/login' : '/register', search: { returnTo } })
+          }}
         >
           {register ? 'Entre' : 'Crie uma conta'}
         </Button>

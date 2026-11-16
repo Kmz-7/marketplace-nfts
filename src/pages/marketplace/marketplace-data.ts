@@ -1,8 +1,8 @@
 export const images = {
-  emerald: '/assets/marketplace/ape-sunglasses.png',
-  violet: '/assets/marketplace/ape-explorer.png',
-  ivory: '/assets/marketplace/ape-cream-coat.png',
-  golden: '/assets/marketplace/ape-headphones.png',
+  emerald: '/assets/marketplace/ape-sunglasses.webp',
+  violet: '/assets/marketplace/ape-explorer.webp',
+  ivory: '/assets/marketplace/ape-cream-coat.webp',
+  golden: '/assets/marketplace/ape-headphones.webp',
 }
 
 export const items = [

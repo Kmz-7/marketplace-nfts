@@ -9,10 +9,18 @@ export interface OrderItemContract {
   quantity: number
 }
 
+export interface CreateOrderRequestContract {
+  quoteId: string
+  wallet: 'metamask' | 'walletconnect' | 'coinbase'
+  network: 'ethereum' | 'polygon' | 'solana'
+}
+
 export interface OrderContract {
   id: string
   userId: string
   status: OrderStatus
+  wallet: 'MetaMask' | 'WalletConnect' | 'Coinbase Wallet'
+  network: 'Ethereum' | 'Polygon' | 'Solana'
   items: OrderItemContract[]
   subtotalEth: string
   discountEth: string
@@ -21,4 +29,11 @@ export interface OrderContract {
   transactionReference: string | null
   createdAt: string
   updatedAt: string
+}
+
+export interface OrderUpdatedEventContract {
+  eventId: string
+  version: number
+  resource: 'order'
+  order: OrderContract
 }

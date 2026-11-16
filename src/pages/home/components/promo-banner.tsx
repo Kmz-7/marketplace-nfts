@@ -23,7 +23,7 @@ export function PromoBanner({
 }: PromoBannerProps) {
   return (
     <Card className="grid h-[250px] grid-cols-2 gap-0 overflow-hidden rounded-2xl border-0 bg-card p-0 ring-0">
-      <img src={image} alt={imageAlt} className="image-banner h-full min-h-0 w-full rounded-2xl" />
+      <img src={image} alt={imageAlt} loading="lazy" decoding="async" className="image-banner h-full min-h-0 w-full rounded-2xl" />
       {/* No exemplo do Figma, o texto começava colado à imagem e a ação ao texto descritivo; recuperar padding e margem padrão separa os blocos sem mudar a composição. */}
       {/* No Figma, os títulos, descrições e ações dos banners terminavam em alturas diferentes; linhas reservadas alinham título, corpo e rodapé sem reduzir a fonte. */}
       <CardContent className="grid h-full grid-rows-[48px_1fr_40px] items-center justify-items-end gap-3 p-4 text-right sm:p-5">

@@ -4,7 +4,7 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { HomeNftCard } from '@/pages/home/components/home-nft-card'
 import { items } from '@/pages/marketplace/marketplace-data'
 
-export function RelatedProducts({ title }: { title: string }) {
+export function RelatedProducts({ title, className = 'mt-16' }: { title: string; className?: string }) {
   const listRef = useRef<HTMLDivElement>(null)
   const isMobile = useIsMobile()
   const itemsPerPage = isMobile ? 2 : 5
@@ -64,7 +64,7 @@ export function RelatedProducts({ title }: { title: string }) {
   }
 
   return (
-    <section className="mt-16" aria-label={title}>
+    <section className={className} aria-label={title}>
       <div className="border-b border-border pb-3">
         <h2 className="text-lg font-semibold text-primary">{title}</h2>
       </div>

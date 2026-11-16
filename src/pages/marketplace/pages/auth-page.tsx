@@ -14,7 +14,7 @@ export function AuthPage({
 
   if (isMobile) {
     return (
-      <main className="mx-auto w-full max-w-md">
+      <main className="min-h-dvh w-full bg-background">
         <AuthForm register={register} returnTo={returnTo} />
       </main>
     )

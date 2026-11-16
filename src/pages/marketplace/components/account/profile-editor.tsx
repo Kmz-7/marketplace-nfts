@@ -51,7 +51,7 @@ export function ProfileEditor() {
             ))}
           </div>
         </section>
-        <Button type="submit" className="mt-8 h-10 min-w-36">
+        <Button type="submit" width="mobile" className="mt-8 h-10 min-w-36">
           Salvar alterações
         </Button>
       </form>

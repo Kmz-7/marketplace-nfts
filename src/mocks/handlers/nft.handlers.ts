@@ -3,6 +3,7 @@ import type { ApiErrorContract } from '@/types/user.contracts'
 import type { NftQueryParams } from '@/types/nft.contracts'
 import { broadcastNftUpdated } from '@/mocks/socket/socket.server'
 import { resetMockAuth } from '@/mocks/state/auth.store'
+import { resetMockCommerce } from '@/mocks/state/commerce.store'
 import {
   getNetworkScenario,
   getNft,
@@ -136,6 +137,7 @@ export const nftHandlers = [
   http.post('/api/mock/reset', () => {
     resetNftStore()
     resetMockAuth()
+    resetMockCommerce()
     return HttpResponse.json({ reset: true })
   }),
 

@@ -71,18 +71,15 @@ function WalletField({ field }: { field: string }) {
 export function WalletSettings() {
   return (
     <section aria-labelledby="wallet-settings-title">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 id="wallet-settings-title" className="text-lg font-semibold">
-            Carteiras
-          </h2>
-          <p className="mt-2 text-md text-muted-foreground">
-            Gerencie as carteiras usadas para comprar e receber NFTs.
-          </p>
-        </div>
-        <Button type="button" variant="outline" className="h-10 border-primary text-primary">
-          Adicionar carteira
-        </Button>
+      {/* O botão "Adicionar carteira" do topo repetia a ação do card de carteira secundária; ficou só no card. */}
+      <div className="mb-6">
+        {/* No mobile, o cabeçalho da página já mostra "Carteiras"; o título repetido fica só no desktop. */}
+        <h2 id="wallet-settings-title" className="hidden text-lg font-semibold md:block">
+          Carteiras
+        </h2>
+        <p className="text-md text-muted-foreground md:mt-2">
+          Gerencie as carteiras usadas para comprar e receber NFTs.
+        </p>
       </div>
       <Card className="gap-0 rounded-sm border-0 bg-card p-5 shadow-none ring-0">
         <CardContent className="p-0">
@@ -103,7 +100,7 @@ export function WalletSettings() {
               <WalletField key={field} field={field} />
             ))}
           </form>
-          <Button type="button" className="mt-6 h-10 px-8">
+          <Button type="button" width="mobile" className="mt-6 h-10 px-8">
             Salvar carteira
           </Button>
         </CardContent>
@@ -116,8 +113,8 @@ export function WalletSettings() {
               Você ainda não adicionou uma carteira secundária.
             </p>
           </div>
-          <Button type="button" variant="outline" className="h-10">
-            Adicionar carteira secundária
+          <Button type="button" variant="outline" width="mobile" className="h-10">
+            Adicionar carteira
           </Button>
         </CardContent>
       </Card>

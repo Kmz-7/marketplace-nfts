@@ -13,6 +13,9 @@ const inputVariants = cva(
         groupAddon:
           'flex-1 rounded-none border-0 bg-transparent shadow-none ring-0 focus-visible:ring-0 disabled:bg-transparent aria-invalid:ring-0 dark:bg-transparent dark:disabled:bg-transparent',
         search: 'h-11 rounded-xl border-0 bg-card pl-11 text-xs',
+        // O campo de busca mobile do Figma usa texto 14 bold e placeholder em tom secundário mais apagado.
+        searchMobile:
+          'h-11 rounded-lg border-0 bg-card pl-11 text-sm font-bold placeholder:text-muted-foreground/70 dark:bg-card',
         newsletter:
           'h-10 flex-1 rounded-l-sm rounded-r-none border-0 bg-surface-dark text-xs dark:bg-surface-dark',
         cartCoupon: 'h-10 rounded-lg border-primary bg-card px-3 text-sm leading-4',
@@ -22,7 +25,8 @@ const inputVariants = cva(
           'h-10 min-w-0 rounded-l-sm rounded-r-none border-checkout-border bg-transparent text-sm text-muted-foreground dark:bg-transparent',
         checkoutCoupon:
           'h-9 min-w-0 rounded-r-none border-checkout-border bg-transparent text-sm text-muted-foreground dark:bg-transparent',
-        auth: 'h-12',
+        // Campos das telas de acesso mobile: 50 px, texto 14 e placeholder no tom secundário do Figma.
+        auth: 'h-12 px-4 text-sm placeholder:text-muted-foreground/70 md:text-sm',
         authDialog:
           'h-8 min-w-0 rounded-l-sm rounded-r-none border-checkout-border bg-transparent text-xs! text-foreground placeholder:text-muted-foreground dark:bg-transparent',
         authDialogPassword:

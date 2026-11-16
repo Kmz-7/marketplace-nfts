@@ -22,6 +22,7 @@
   --primary-foreground: #140d0a;
   --secondary: #241612;
   --surface-dark: #38220f;
+  --surface-raised: #2f1d15;
   --surface-dark-border: #55321f;
   --checkout-border: #3f2319;
   --required-marker: #f0805f;
@@ -39,11 +40,17 @@
   --radius: 0.5rem;
 }
 
+@theme {
+  /* Telefones estreitos (abaixo de 425 px) recebem composições próprias: banner empilhado e grade uniforme. */
+  --breakpoint-xs: 26.5625rem;
+  /* O Figma repetia tamanhos próximos; md reutiliza a medida base para manter a escala xs–xl uniforme. */
+  --text-md: 1rem;
+  --text-md--line-height: calc(1.5 / 1);
+}
+
 @theme inline {
   --font-sans: var(--font-family);
   --font-mono: var(--font-family);
-  /* O Figma repetia tamanhos próximos; md reutiliza a medida base para manter a escala xs–xl uniforme. */
-  --text-md: 1rem;
   --color-background: var(--background);
   --color-near-white: var(--near-white);
   --color-foreground: var(--foreground);
@@ -55,6 +62,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-surface-dark: var(--surface-dark);
+  --color-surface-raised: var(--surface-raised);
   --color-surface-dark-border: var(--surface-dark-border);
   --color-checkout-border: var(--checkout-border);
   --color-required-marker: var(--required-marker);
@@ -78,6 +86,23 @@
   box-sizing: border-box;
 }
 
+/* O Figma mobile usa fontes grandes demais para 390 px (títulos de 20 px, textos de 15/16 px).
+   Abaixo de md, toda a escala desce um degrau: xl→lg, lg→md, md→sm, sm→xs, e xs vai a 11 px. */
+@media (max-width: 767px) {
+  :root {
+    --text-xl: 1.125rem;
+    --text-xl--line-height: calc(1.75 / 1.125);
+    --text-lg: 1rem;
+    --text-lg--line-height: calc(1.5 / 1);
+    --text-md: 0.875rem;
+    --text-md--line-height: calc(1.25 / 0.875);
+    --text-sm: 0.75rem;
+    --text-sm--line-height: calc(1 / 0.75);
+    --text-xs: 0.6875rem;
+    --text-xs--line-height: calc(1 / 0.6875);
+  }
+}
+
 /* O Figma variava o enquadramento e o tamanho das imagens entre telas; estes papéis alinham banners, artes de exibição e miniaturas. */
 .image-banner {
   object-fit: cover;
@@ -96,12 +121,41 @@
   object-fit: cover;
 }
 
+@media (max-width: 767px) {
+  /* No Figma mobile, miniaturas de carrinho usam 96 px e mantêm a mesma dimensão em cada cartão. */
+  .image-thumbnail {
+    width: 6rem;
+    height: 6rem;
+    flex-basis: 6rem;
+  }
+}
+
+/* Moldura dos cards mobile e do hero do NFT, igual ao gradiente Surface Card → Surface Raised do Figma. */
+@utility surface-gradient {
+  background-image: linear-gradient(140deg, var(--card) 12%, var(--surface-raised) 106%);
+}
+
+/* Exceção tipográfica: o logotipo das telas de acesso usa 32 px no Figma, fora da escala xs–xl do texto corrido. */
+.brand-logo {
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
 /* Os indicadores do carrossel da Home eram menores que os do carrossel de produtos. */
 .carousel-indicator {
   width: 0.75rem;
   height: 0.75rem;
   flex: 0 0 0.75rem;
   border-radius: 9999px;
+}
+
+/* No painel mobile da Home, os indicadores de 12 px competiam com o texto; a versão compacta usa 6 px. */
+.carousel-indicator-compact {
+  width: 0.375rem;
+  height: 0.375rem;
+  flex-basis: 0.375rem;
 }
 
 /* Avisos de ações sobem com fade suave e respeitam a preferência por movimento reduzido. */
@@ -147,6 +201,7 @@
   background: transparent;
   color: var(--primary);
 }
+
 
 html {
   min-width: 320px;

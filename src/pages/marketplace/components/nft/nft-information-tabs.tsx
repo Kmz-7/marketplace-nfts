@@ -1,17 +1,27 @@
-import { Card, CardContent } from '@/components/ui/card'
+import { lazy, Suspense, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
+const NftReviews = lazy(() =>
+  import('@/pages/marketplace/components/nft/nft-reviews').then((module) => ({
+    default: module.NftReviews,
+  })),
+)
+
 export function NftInformationTabs({
+  nftId,
   nftName,
   creator,
   edition,
 }: {
+  nftId: string
   nftName: string
   creator: string
   edition: string
 }) {
+  const [activeTab, setActiveTab] = useState('details')
+
   return (
-    <Tabs defaultValue="details" className="mt-12 md:mt-16">
+    <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value ?? 'details')} className="mt-12 md:mt-16">
       <TabsList
         variant="line"
         className="h-auto w-full justify-start gap-8 rounded-none border-b border-border p-0"
@@ -61,14 +71,19 @@ export function NftInformationTabs({
         </p>
       </TabsContent>
       <TabsContent value="reviews" className="pt-7">
-        <Card className="rounded-xl border-border bg-card p-5 shadow-none">
-          <CardContent className="p-0">
-            <h2 className="text-lg font-semibold text-foreground">Avaliações de colecionadores</h2>
-            <p className="mt-2 text-md text-muted-foreground">
-              As avaliações de clientes para este NFT serão exibidas aqui.
-            </p>
-          </CardContent>
-        </Card>
+        {activeTab === 'reviews' && (
+          <Suspense
+            fallback={
+              <div role="status" aria-label="Carregando avaliações" className="space-y-3">
+                <div className="h-20 animate-pulse rounded-lg bg-muted" />
+                <div className="h-28 animate-pulse rounded-lg bg-muted" />
+                <div className="h-28 animate-pulse rounded-lg bg-muted" />
+              </div>
+            }
+          >
+            <NftReviews nftId={nftId} />
+          </Suspense>
+        )}
       </TabsContent>
     </Tabs>
   )

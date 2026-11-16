@@ -39,11 +39,17 @@ function DialogContent({
   children,
   overlayClassName,
   showCloseButton = true,
+  variant = 'default',
+  closeLabel = 'Close',
   ...props
 }: DialogPrimitive.Popup.Props & {
   overlayClassName?: string
   showCloseButton?: boolean
+  /** `fullscreen`: ocupa a viewport inteira como uma tela (acesso mobile). */
+  variant?: 'default' | 'fullscreen'
+  closeLabel?: string
 }) {
+  const fullscreen = variant === 'fullscreen'
   return (
     <DialogPortal>
       <DialogOverlay className={overlayClassName} />
@@ -51,6 +57,8 @@ function DialogContent({
         data-slot="dialog-content"
         className={cn(
           'fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+          fullscreen &&
+            'inset-0 block h-dvh w-screen max-w-none translate-x-0 translate-y-0 overflow-y-auto overscroll-contain rounded-none bg-background p-0 text-foreground ring-0 sm:max-w-none data-open:zoom-in-100 data-closed:zoom-out-100',
           className,
         )}
         {...props}
@@ -59,10 +67,16 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            render={<Button variant="ghost" className="absolute top-2 right-2" size="icon-sm" />}
+            render={
+              fullscreen ? (
+                <Button variant="surface" className="fixed top-6 right-7 z-10 text-muted-foreground" size="icon-lg" />
+              ) : (
+                <Button variant="ghost" className="absolute top-2 right-2" size="icon-sm" />
+              )
+            }
           >
             <XIcon />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{closeLabel}</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>

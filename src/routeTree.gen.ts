@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LegacyRouteImport } from './routes/$legacy'
+import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as ConfirmationRouteImport } from './routes/confirmation'
 import { Route as CreatorsRouteImport } from './routes/creators'
@@ -31,6 +32,11 @@ const IndexRoute = IndexRouteImport.update({
 const LegacyRoute = LegacyRouteImport.update({
   id: '/$legacy',
   path: '/$legacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActivityRoute = ActivityRouteImport.update({
+  id: '/activity',
+  path: '/activity',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CartRoute = CartRouteImport.update({
@@ -92,6 +98,7 @@ const WalletsRoute = WalletsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$legacy': typeof LegacyRoute
+  '/activity': typeof ActivityRoute
   '/cart': typeof CartRoute
   '/confirmation': typeof ConfirmationRoute
   '/creators': typeof CreatorsRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$legacy': typeof LegacyRoute
+  '/activity': typeof ActivityRoute
   '/cart': typeof CartRoute
   '/confirmation': typeof ConfirmationRoute
   '/creators': typeof CreatorsRoute
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$legacy': typeof LegacyRoute
+  '/activity': typeof ActivityRoute
   '/cart': typeof CartRoute
   '/confirmation': typeof ConfirmationRoute
   '/creators': typeof CreatorsRoute
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/$legacy'
+    | '/activity'
     | '/cart'
     | '/confirmation'
     | '/creators'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$legacy'
+    | '/activity'
     | '/cart'
     | '/confirmation'
     | '/creators'
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/$legacy'
+    | '/activity'
     | '/cart'
     | '/confirmation'
     | '/creators'
@@ -186,6 +198,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LegacyRoute: typeof LegacyRoute
+  ActivityRoute: typeof ActivityRoute
   CartRoute: typeof CartRoute
   ConfirmationRoute: typeof ConfirmationRoute
   CreatorsRoute: typeof CreatorsRoute
@@ -213,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/$legacy'
       fullPath: '/$legacy'
       preLoaderRoute: typeof LegacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/activity': {
+      id: '/activity'
+      path: '/activity'
+      fullPath: '/activity'
+      preLoaderRoute: typeof ActivityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cart': {
@@ -298,6 +318,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LegacyRoute: LegacyRoute,
+  ActivityRoute: ActivityRoute,
   CartRoute: CartRoute,
   ConfirmationRoute: ConfirmationRoute,
   CreatorsRoute: CreatorsRoute,

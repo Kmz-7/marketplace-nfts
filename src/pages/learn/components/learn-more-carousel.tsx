@@ -1,52 +1,105 @@
-import { Link } from '@tanstack/react-router'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import type { LearningArticle } from '@/pages/learn/article-data'
+import { LearningArticleCard } from './learning-article-card'
+
+function getItemsPerPage() {
+  if (window.matchMedia('(min-width: 1024px)').matches) return 4
+  if (window.matchMedia('(min-width: 640px)').matches) return 2
+  return 1
+}
 
 export function LearnMoreCarousel({ articles }: { articles: readonly LearningArticle[] }) {
   const listRef = useRef<HTMLDivElement>(null)
+  const [itemsPerPage, setItemsPerPage] = useState(1)
+  const [pageState, setPageState] = useState({ itemsPerPage: 1, activePage: 0 })
+  const activePage = pageState.itemsPerPage === itemsPerPage ? pageState.activePage : 0
+  const pageStarts = Array.from({ length: Math.ceil(articles.length / itemsPerPage) }, (_, index) =>
+    index * itemsPerPage,
+  )
 
-  function scroll(direction: -1 | 1) {
+  useEffect(() => {
+    const updateItemsPerPage = () => setItemsPerPage(getItemsPerPage())
+    updateItemsPerPage()
+    window.addEventListener('resize', updateItemsPerPage)
+    return () => window.removeEventListener('resize', updateItemsPerPage)
+  }, [])
+
+  useEffect(() => {
+    listRef.current?.scrollTo({ left: 0 })
+  }, [itemsPerPage])
+
+  function goToPage(page: number) {
     const list = listRef.current
-    if (!list) return
-    list.scrollBy({ left: direction * list.clientWidth, behavior: 'smooth' })
+    const card = list?.firstElementChild
+    if (!list || !card) return
+    list.scrollTo({
+      left: pageStarts[page] * (card.getBoundingClientRect().width + 20),
+      behavior: 'smooth',
+    })
+    setPageState({ itemsPerPage, activePage: page })
+  }
+
+  function syncActivePage() {
+    const list = listRef.current
+    const card = list?.firstElementChild
+    if (!list || !card) return
+    const stride = card.getBoundingClientRect().width + 20
+    const currentStart = list.scrollLeft / stride
+    const closestPage = pageStarts.reduce(
+      (closest, start, index) =>
+        Math.abs(start - currentStart) < Math.abs(pageStarts[closest] - currentStart)
+          ? index
+          : closest,
+      0,
+    )
+    setPageState({ itemsPerPage, activePage: closestPage })
   }
 
   return (
     <section aria-labelledby="learn-more-title" className="mt-20">
-      <div className="flex items-center justify-between gap-4 border-b border-border pb-3">
-        <h2 id="learn-more-title" className="text-lg font-semibold text-primary">Aprenda mais</h2>
-        <div className="flex gap-2" role="group" aria-label="Navegar pelas reportagens">
-          <Button type="button" variant="outline" size="icon-sm" aria-label="Reportagens anteriores" onClick={() => scroll(-1)}>
-            <ChevronLeft className="size-4" />
-          </Button>
-          <Button type="button" variant="outline" size="icon-sm" aria-label="Próximas reportagens" onClick={() => scroll(1)}>
-            <ChevronRight className="size-4" />
-          </Button>
-        </div>
+      <div className="border-b border-border pb-3">
+        <h2 id="learn-more-title" className="text-lg font-semibold text-primary">
+          Aprenda mais
+        </h2>
       </div>
-      {/* A sessão tinha um card a menos que o grid anterior; duas colunas deixam as imagens maiores e permitem navegar pelos artigos. */}
+      {/* No Figma, Aprenda mais não seguia os cards da Home nem os indicadores de página; o carrossel compartilha o mesmo card e os pontos de Mais destaques. */}
       <div
         ref={listRef}
+        onScroll={syncActivePage}
         className="mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth [scrollbar-none] [&::-webkit-scrollbar]:hidden"
         aria-label="Outras reportagens"
       >
         {articles.map((article) => (
-          <Card key={article.slug} className="w-[min(85vw,32rem)] shrink-0 snap-start gap-0 overflow-hidden rounded-xl border-border bg-card p-0 md:w-[calc((100%-1.25rem)/2)]">
-            <img src={article.image} alt="" className="image-banner aspect-[4/3] w-full" />
-            <CardContent className="flex h-full flex-col gap-3 p-4">
-              <p className="text-xs text-muted-foreground">{article.date} · {article.readTime}</p>
-              <h3 className="text-lg font-semibold text-foreground">{article.title}</h3>
-              <p className="text-md text-muted-foreground">{article.description}</p>
-              <Button render={<Link to="/learn" search={{ article: article.slug }} />} variant="link" className="mt-auto h-auto w-fit p-0 text-xs text-primary">
-                Ler reportagem
-              </Button>
-            </CardContent>
-          </Card>
+          <div
+            key={article.slug}
+            className="w-[min(85vw,25rem)] shrink-0 snap-start sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-3.75rem)/4)]"
+          >
+            <LearningArticleCard article={article} />
+          </div>
         ))}
       </div>
+      {pageStarts.length > 1 && (
+        <div role="group" aria-label="Páginas de Aprenda mais" className="mt-5 flex justify-center gap-2">
+          {pageStarts.map((_, index) => (
+            <Button
+              key={index}
+              type="button"
+              variant="ghost"
+              size="icon-xs"
+              aria-label={`Mostrar grupo ${index + 1} de ${pageStarts.length}`}
+              aria-pressed={activePage === index}
+              onClick={() => goToPage(index)}
+              className="size-6 rounded-lg border-0 p-0 hover:bg-transparent"
+            >
+              <span
+                aria-hidden="true"
+                className={`carousel-indicator border border-primary transition-all ${activePage === index ? 'bg-primary' : 'bg-transparent'}`}
+              />
+            </Button>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

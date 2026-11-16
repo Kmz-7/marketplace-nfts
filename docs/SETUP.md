@@ -34,7 +34,7 @@ npm install axios socket.io-client
 - **TanStack Router:** rotas, URL de busca e navegação entre telas; o plugin de rotas está em `vite.config.ts`.
 - **TanStack Query:** consultas REST, mutations, cache, invalidação e sincronização.
 - **Axios:** cliente HTTP que será usado pela camada de serviços REST.
-- **Socket.IO Client:** assinatura de eventos em `src/services/socket.ts`; atualmente o cliente consome `nft.updated`.
+- **Socket.IO Client:** assinatura de eventos `nft.updated` e `order.updated` em `src/services/socket.ts`.
 
 As ferramentas de compilação e tipos foram adicionadas como dependências de desenvolvimento:
 
@@ -75,7 +75,7 @@ npx playwright install chromium
 ```
 
 - **Playwright** abre um Chromium controlado para validar fluxos completos e tamanhos de tela.
-- Configuração em `playwright.config.ts`; testes entram em `e2e/`.
+- Configuração em `playwright.config.ts`; testes em `e2e/` rodam em Chromium desktop e mobile.
 - `trace` e relatório HTML ajudam a investigar falhas.
 
 ### Auditoria de qualidade
@@ -84,11 +84,12 @@ npx playwright install chromium
 npm install -D @lhci/cli
 ```
 
-**Lighthouse CI** mede performance, acessibilidade, boas práticas e SEO no build de produção. A configuração inicial está em `lighthouserc.json`; os relatórios locais serão gravados em `.lighthouseci/`.
+**Lighthouse CI** mede performance, acessibilidade, boas práticas e SEO no build de produção. As configurações desktop e mobile (`lighthouserc.desktop.json` e `lighthouserc.mobile.json`) auditam Home e detalhe três vezes por perfil. Os relatórios entregáveis HTML/JSON ficam versionados em `docs/audits/lighthouse/`; `.lighthouseci/` é usado internamente pelo LHCI durante a execução.
 
 ## Comandos do projeto
 
 ```bash
+npm run dev:mocks           # Vite com MSW REST e Socket.IO ativo
 npm run dev                 # servidor de desenvolvimento
 npm run build               # verificação TypeScript e build otimizado
 npm run preview              # serve o build localmente
@@ -97,7 +98,8 @@ npm run lint                 # ESLint
 npm run test:e2e             # testes E2E Chromium
 npm run test:e2e:ui          # interface interativa do Playwright
 npm run test:e2e:report      # abre o relatório HTML mais recente
-npm run audit:lighthouse     # auditoria Lighthouse CI
+npm run audit:lighthouse     # Lighthouse desktop
+npm run audit:lighthouse:mobile # Lighthouse mobile
 ```
 
 ### Componentes shadcn/ui instalados

@@ -102,6 +102,11 @@ export const userHandlers = [
     return HttpResponse.json({ expired })
   }),
 
+  http.get('/api/users', async () => {
+    await delay(250)
+    return HttpResponse.json(getMockUsers())
+  }),
+
   http.get('/api/users/:userId', async ({ params }) => {
     await delay(350)
     const user = getMockUsers().find((fixture) => fixture.id === params.userId)

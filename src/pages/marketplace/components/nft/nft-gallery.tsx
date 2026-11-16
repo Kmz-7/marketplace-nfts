@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { ZoomIn } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
+import { marketplaceImageSrcSet } from '@/lib/responsive-image'
 
 type NftGalleryProps = {
   gallery: string[]
@@ -22,9 +23,9 @@ export function NftGallery({
   onOpenFullscreen,
 }: NftGalleryProps) {
   return (
-    <div className="flex flex-col-reverse gap-3 md:flex-row">
+    <div className="flex flex-col gap-3 md:flex-row">
       {/* No Figma, as miniaturas pareciam apenas decorativas; clicar em qualquer uma agora troca a seleção, mesmo quando a arte é igual, e mostra o estado de carregamento. */}
-      <div className="grid grid-cols-4 gap-2 md:flex md:w-[18%] md:flex-col md:justify-between">
+      <div className="hidden grid-cols-4 gap-2 md:flex md:w-[18%] md:flex-col md:justify-between">
         {gallery.map((image, index) => (
           <Button
             key={index}
@@ -43,14 +44,18 @@ export function NftGallery({
           </Button>
         ))}
       </div>
-      <div className="relative flex aspect-square min-w-0 flex-1 items-center justify-center overflow-hidden rounded-lg bg-card p-5">
+      <div className="relative flex aspect-square min-w-0 flex-1 items-center justify-center overflow-hidden rounded-3xl bg-transparent p-0 md:rounded-lg md:bg-card md:p-5">
         {isImageLoading ? (
           <Skeleton className="h-full w-full rounded-[15px]" />
         ) : (
           <img
             src={selectedImage}
+            srcSet={marketplaceImageSrcSet(selectedImage)}
+            sizes="(max-width: 767px) 32vw, 50vw"
             alt={nftName}
-            className="image-standard h-full w-full rounded-[15px]"
+            className="image-standard h-full w-full rounded-3xl md:rounded-[15px]"
+            fetchPriority="high"
+            decoding="async"
           />
         )}
         <Button

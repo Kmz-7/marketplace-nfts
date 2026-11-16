@@ -4,7 +4,10 @@ import { Button } from '@/components/ui/button'
 type QuantityButtonProps = {
   action: 'decrease' | 'increase'
   label: string
-  scale?: 'compact' | 'large'
+  /** `mini`: 20 px, usado no card do carrinho mobile. */
+  scale?: 'mini' | 'compact' | 'large'
+  /** `surface`: botão escuro com borda, usado nos cards do carrinho mobile do Figma. */
+  tone?: 'primary' | 'surface'
   disabled?: boolean
   onClick: () => void
 }
@@ -13,6 +16,7 @@ export function QuantityButton({
   action,
   label,
   scale = 'compact',
+  tone = 'primary',
   disabled = false,
   onClick,
 }: QuantityButtonProps) {
@@ -23,14 +27,14 @@ export function QuantityButton({
   return (
     <Button
       type="button"
-      variant="default"
+      variant={tone === 'surface' ? 'surface' : 'default'}
       size={isLarge ? 'icon-sm' : 'icon-xs'}
-      className="rounded-lg p-0 text-primary-foreground hover:bg-primary/90"
+      className={`${tone === 'surface' ? 'p-0' : 'p-0 text-primary-foreground hover:bg-primary/90'} ${scale === 'mini' ? 'size-5' : ''}`}
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
     >
-      <Icon className="size-4" />
+      <Icon className={scale === 'mini' ? 'size-3' : 'size-4'} />
     </Button>
   )
 }

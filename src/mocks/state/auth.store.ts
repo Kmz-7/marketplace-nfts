@@ -1,6 +1,6 @@
 import { AUTH_TOKEN_STORAGE_KEY } from '@/lib/auth-token'
 import type { AuthResponseContract, SessionContract, UserContract } from '@/types/user.contracts'
-import { userFixtures } from '../fixtures/user.fixtures'
+import { reviewerFixtures, userFixtures } from '../fixtures/user.fixtures'
 
 interface StoredAccount {
   user: UserContract
@@ -122,7 +122,10 @@ export function findMockAccount(email: string) {
 }
 
 export function getMockUsers() {
-  return readAccounts().map((account) => account.user)
+  const users = new Map(userFixtures.map((user) => [user.id, user]))
+  for (const account of readAccounts()) users.set(account.user.id, account.user)
+  for (const reviewer of reviewerFixtures) users.set(reviewer.id, reviewer)
+  return [...users.values()]
 }
 
 export async function createMockAccount(name: string, email: string, password: string) {

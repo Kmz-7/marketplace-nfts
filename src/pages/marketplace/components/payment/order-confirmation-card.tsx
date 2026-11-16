@@ -10,16 +10,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { items } from '@/pages/marketplace/marketplace-data'
+import { formatEth, multiplyEth, parseEth } from '@/lib/eth'
+import type { OrderContract } from '@/types/order.contracts'
 
-const purchasedItems = [
-  { ...items[0], tokenId: '#0042', quantity: 2 },
-  { ...items[1], tokenId: '#0314', quantity: 6 },
-  { ...items[2], tokenId: '#0088', quantity: 9 },
-]
-
-export function OrderConfirmationCard() {
+export function OrderConfirmationCard({ order }: { order: OrderContract }) {
   const navigate = useNavigate()
+  const transaction = order.transactionReference
+  const shortTransaction = transaction
+    ? `${transaction.slice(0, 8)}…${transaction.slice(-6)}`
+    : '—'
+  const createdAt = new Intl.DateTimeFormat('pt-BR', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(order.createdAt))
 
   return (
     <Card className="relative w-full max-w-lg gap-0 overflow-hidden rounded-none border-0 bg-card py-8 shadow-none ring-0">
@@ -31,32 +34,48 @@ export function OrderConfirmationCard() {
         aria-label="Fechar confirmação"
         onClick={() => void navigate({ to: '/' })}
       >
-        <X />
+        <X className="size-4" />
       </Button>
       <CardContent className="p-0">
         <div className="flex flex-col items-center text-center">
           <img src="/assets/helpers/envelope.svg" alt="" className="h-20 w-[66px] object-contain" />
           <h1 className="mt-3 text-lg leading-6 font-semibold text-muted-foreground">
-            Seus NFTs agora estão na sua carteira
+            Compra confirmada
           </h1>
         </div>
 
-        <div className="relative px-10">
-          <div className="mt-3 -mx-10 flex items-center justify-between border-y border-primary px-10 py-3 text-xs">
-            <ConfirmationDetail label="ID da transação" value="0xA91F...E82C" />
-            <DetailDivider />
-            <ConfirmationDetail label="Data" value="29 Jul, 2026" />
-            <DetailDivider />
-            <ConfirmationDetail label="Total" value="26.846 ETH" />
-            <DetailDivider />
-            <ConfirmationDetail label="Carteira" value="MetaMask" />
+        <div className="relative px-6 sm:px-10">
+          <div className="mt-3 grid grid-cols-2 gap-4 border-y border-primary px-1 py-3 text-xs sm:grid-cols-4">
+            <ConfirmationDetail label="ID do pedido" value={order.id} />
+            <ConfirmationDetail label="Data" value={createdAt} />
+            <ConfirmationDetail label="Total" value={`${formatEth(parseEth(order.totalEth))} ETH`} />
+            <ConfirmationDetail label="Carteira" value={order.wallet} />
           </div>
 
           <div className="mt-4">
             <h2 className="text-lg font-semibold">Detalhes da transação</h2>
+            {/* No mobile, a tabela de 3 colunas espremia o nome ao lado da miniatura de 96 px; vira uma lista com quantidade e subtotal na base. */}
+            <ul aria-label="Itens da transação" className="mt-3 space-y-3 md:hidden">
+              {order.items.map((item) => (
+                <li key={`${item.nftId}-${item.editionId}`} className="flex items-center gap-3">
+                  <img src={item.imageUrl} alt={item.name} className="image-thumbnail shrink-0 rounded-sm" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold">{item.name}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">ID do token:</p>
+                    <p className="truncate text-xs text-primary">#{tokenNumber(item.nftId)}</p>
+                    <div className="mt-2 flex items-baseline justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">(x {item.quantity})</span>
+                      <span className="text-md font-semibold whitespace-nowrap text-primary">
+                        {multiplyEth(item.unitPriceEth, item.quantity)} ETH
+                      </span>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
             <Table
               aria-label="Itens da transação"
-              className="w-full table-fixed border-separate border-spacing-x-0 border-spacing-y-2 text-xs"
+              className="hidden w-full table-fixed md:table border-separate border-spacing-x-0 border-spacing-y-2 text-xs"
             >
               <colgroup>
                 <col className="w-[58%]" />
@@ -77,62 +96,56 @@ export function OrderConfirmationCard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {purchasedItems.map((item, index) => (
-                  <TableRow key={item.name} className="border-0 hover:bg-transparent">
+                {order.items.map((item) => (
+                  <TableRow key={`${item.nftId}-${item.editionId}`} className="border-0 hover:bg-transparent">
                     <TableCell className="p-0">
                       <div className="flex min-w-0 items-center gap-2">
-                        {/* O Figma variava o tamanho das miniaturas dentro do mesmo recibo; todas seguem a dimensão compartilhada de 64 px. */}
                         <img
-                          src={item.image}
-                          alt=""
-                          className="image-thumbnail rounded-sm"
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="image-thumbnail shrink-0 rounded-sm"
                         />
                         <div className="min-w-0">
                           <p className="truncate text-xs font-semibold">{item.name}</p>
-                          <p className="mt-1 truncate text-xs text-muted-foreground">
-                            ID do token: <span className="text-primary">{item.tokenId}</span>
+                          {/* Na mesma linha, rótulo e ID não cabiam ao lado da miniatura e o ID era sempre cortado; o ID desce para a linha de baixo. */}
+                          <p className="mt-1 text-xs text-muted-foreground">ID do token:</p>
+                          <p className="truncate text-xs text-primary">
+                            #{tokenNumber(item.nftId)}
                           </p>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell
-                      className={`p-0 text-center text-xs text-muted-foreground ${index === 1 ? 'ps-1' : index === 2 ? 'pl-2' : ''}`}
-                    >
+                    <TableCell className="p-0 text-center text-xs text-muted-foreground">
                       (x {item.quantity})
                     </TableCell>
-                    <TableCell
-                      className={`p-0 text-right text-md font-semibold text-primary ${index === 0 ? 'pe-2' : index === 1 ? 'pe-1' : ''}`}
-                    >
-                      {(Number(item.price) * item.quantity).toFixed(2)} ETH
+                    <TableCell className="p-0 text-right text-md font-semibold text-primary">
+                      {multiplyEth(item.unitPriceEth, item.quantity)} ETH
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-            <div className="mt-2 border-b border-border pb-2">
-              <div className="grid grid-cols-[70%_30%] items-center">
-                <p className="flex flex-col text-start text-foreground ms-35">
-                  <span className="font-light">Taxa de rede</span>
-                  <span className="font-medium">Total</span>
-                </p>
-                <p className="flex flex-col text-md text-end">
-                  <span>0.016 ETH</span>
-                  <span className="text-primary">26.846 ETH</span>
-                </p>
-              </div>
-            </div>
+            {/* Rótulos e valores ficavam em colunas separadas e desalinhavam quando um valor quebrava linha; cada linha agora pareia rótulo e valor. */}
+            <dl className="mt-2 space-y-1 border-y border-border py-2 text-xs md:border-t-0">
+              <SummaryRow label="Subtotal" value={`${formatEth(parseEth(order.subtotalEth))} ETH`} />
+              <SummaryRow label="Desconto" value={`(−) ${formatEth(parseEth(order.discountEth))} ETH`} />
+              <SummaryRow label={`Taxa de rede · ${order.network}`} value={`${formatEth(parseEth(order.networkFeeEth))} ETH`} />
+              <SummaryRow label="Total" value={`${formatEth(parseEth(order.totalEth))} ETH`} highlight />
+            </dl>
           </div>
 
-          <div className="text-center mt-2">
+          <div className="mt-2 text-center">
             <p className="text-xs leading-5 text-muted-foreground">
-              Transação confirmada na Ethereum. A propriedade foi transferida para sua carteira
-              conectada e registrada na rede.
+              Pedido confirmado no ambiente de demonstração. Referência da transação: {shortTransaction}.
             </p>
             <Button
-              render={<a href="https://etherscan.io/tx/0xA91F" target="_blank" rel="noreferrer" />}
-              className="mt-5 mb-5 h-11 px-3 rounded-md"
+              type="button"
+              variant="outline"
+              width="mobile"
+              className="mt-5 mb-5 h-11 rounded-lg px-3"
+              onClick={() => void navigate({ to: '/' })}
             >
-              Ver no Etherscan
+              Voltar ao marketplace
             </Button>
           </div>
         </div>
@@ -142,15 +155,24 @@ export function OrderConfirmationCard() {
   )
 }
 
-function ConfirmationDetail({ label, value }: { label: string; value: string }) {
+function tokenNumber(nftId: string) {
+  return nftId.match(/(\d+)$/)?.[1]?.padStart(4, '0') ?? nftId
+}
+
+function SummaryRow({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="flex flex-col text-left text-xs text-muted-foreground">
-      <p className="font-semibold">{label}</p>
-      <p className="mt-0.5 font-normal">{value}</p>
+    <div className="flex items-baseline justify-between gap-3">
+      <dt className={highlight ? 'font-medium text-foreground' : 'font-light text-foreground'}>{label}</dt>
+      <dd className={`text-md whitespace-nowrap ${highlight ? 'text-primary' : ''}`}>{value}</dd>
     </div>
   )
 }
 
-function DetailDivider() {
-  return <div className="h-6 w-[1px] shrink-0 bg-primary" aria-hidden="true" />
+function ConfirmationDetail({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex min-w-0 flex-col text-left text-xs text-muted-foreground">
+      <p className="font-semibold">{label}</p>
+      <p className="mt-0.5 truncate font-normal" title={value}>{value}</p>
+    </div>
+  )
 }

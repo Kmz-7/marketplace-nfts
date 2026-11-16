@@ -1,0 +1,80 @@
+[
+  {
+    "url": "http://localhost:4173/",
+    "isRepresentativeRun": false,
+    "htmlPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost--2026_11_16_19_08_57.report.html",
+    "jsonPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost--2026_11_16_19_08_57.report.json",
+    "summary": {
+      "performance": 0.86,
+      "accessibility": 0.98,
+      "best-practices": 1,
+      "seo": 1,
+      "agentic-browsing": 0.5
+    }
+  },
+  {
+    "url": "http://localhost:4173/",
+    "isRepresentativeRun": false,
+    "htmlPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost--2026_11_16_19_09_11.report.html",
+    "jsonPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost--2026_11_16_19_09_11.report.json",
+    "summary": {
+      "performance": 0.87,
+      "accessibility": 0.98,
+      "best-practices": 1,
+      "seo": 1,
+      "agentic-browsing": 0.5
+    }
+  },
+  {
+    "url": "http://localhost:4173/nft?item=emerald-ape-042",
+    "isRepresentativeRun": false,
+    "htmlPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost-nft-2026_11_16_19_09_38.report.html",
+    "jsonPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost-nft-2026_11_16_19_09_38.report.json",
+    "summary": {
+      "performance": 0.89,
+      "accessibility": 1,
+      "best-practices": 1,
+      "seo": 1,
+      "agentic-browsing": 0.5
+    }
+  },
+  {
+    "url": "http://localhost:4173/nft?item=emerald-ape-042",
+    "isRepresentativeRun": false,
+    "htmlPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost-nft-2026_11_16_19_09_51.report.html",
+    "jsonPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost-nft-2026_11_16_19_09_51.report.json",
+    "summary": {
+      "performance": 0.9,
+      "accessibility": 1,
+      "best-practices": 1,
+      "seo": 1,
+      "agentic-browsing": 0.5
+    }
+  },
+  {
+    "url": "http://localhost:4173/",
+    "isRepresentativeRun": true,
+    "htmlPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost--2026_11_16_19_08_42.report.html",
+    "jsonPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost--2026_11_16_19_08_42.report.json",
+    "summary": {
+      "performance": 0.86,
+      "accessibility": 0.98,
+      "best-practices": 1,
+      "seo": 1,
+      "agentic-browsing": 0.5
+    }
+  },
+  {
+    "url": "http://localhost:4173/nft?item=emerald-ape-042",
+    "isRepresentativeRun": true,
+    "htmlPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost-nft-2026_11_16_19_09_26.report.html",
+    "jsonPath": "/home/dev/Projects/Personal/marketplace-nfts/docs/audits/lighthouse/mobile/localhost-nft-2026_11_16_19_09_26.report.json",
+    "summary": {
+      "performance": 0.9,
+      "accessibility": 1,
+      "best-practices": 1,
+      "seo": 1,
+      "agentic-browsing": 0.5
+    }
+  }
+]

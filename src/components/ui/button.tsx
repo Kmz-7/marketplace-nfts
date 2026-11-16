@@ -17,6 +17,11 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-link underline-offset-4 hover:underline",
+        // O Figma mobile aplica gradiente de primary nos CTAs; o raio segue rounded-lg do projeto.
+        gradient:
+          "bg-linear-to-r from-primary to-primary/80 font-bold text-primary-foreground hover:from-primary/90 hover:to-primary/70",
+        surface:
+          "border-checkout-border bg-surface-raised text-foreground hover:bg-surface-raised/80 hover:text-primary",
       },
       size: {
         default:
@@ -30,11 +35,21 @@ const buttonVariants = cva(
         "icon-sm":
           "size-7 rounded-lg in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9",
+        cta: "h-12 w-full gap-2 px-6 text-md font-bold",
+        // Botão flutuante central da tab bar mobile: única exceção circular à regra rounded-lg (Figma).
+        fab: "size-16 [&_svg:not([class*='size-'])]:size-7",
+      },
+      // Regra do sistema: no mobile, um botão sozinho na linha ocupa a largura toda (`mobile`); com outro elemento ao lado, mantém `auto`.
+      width: {
+        auto: "",
+        mobile: "max-md:w-full",
+        full: "w-full",
       },
     },
     defaultVariants: {
       variant: "default",
       size: "default",
+      width: "auto",
     },
   }
 )
@@ -43,6 +58,7 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  width = "auto",
   nativeButton,
   render,
   ...props
@@ -51,7 +67,7 @@ function Button({
   return (
     <ButtonPrimitive
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }), 'rounded-lg')}
+      className={cn(buttonVariants({ variant, size, width, className }), size === 'fab' ? 'rounded-full' : 'rounded-lg')}
       nativeButton={nativeButton ?? render === undefined}
       render={render}
       {...props}

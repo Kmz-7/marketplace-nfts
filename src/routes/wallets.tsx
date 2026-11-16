@@ -4,5 +4,5 @@ import { AccountPage } from '@/pages/marketplace/pages/account-page'
 
 export const Route = createFileRoute('/wallets')({
   beforeLoad: ({ location }) => requireAuthentication(location.href),
-  component: () => <AccountPage wallets />,
+  component: () => <AccountPage section="wallets" />,
 })

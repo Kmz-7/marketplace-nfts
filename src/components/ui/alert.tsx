@@ -10,6 +10,9 @@ const alertVariants = cva(
         default: "bg-card text-card-foreground",
         destructive:
           "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current",
+        // Padrão do sistema para estados de erro, vazio e aviso em páginas (usado por StatusAlert).
+        status:
+          "gap-y-1 border-border bg-card px-4 py-3.5 text-secondary-foreground has-[>svg]:gap-x-3 *:data-[slot=alert-description]:text-pretty *:data-[slot=alert-description]:text-secondary-foreground",
       },
     },
     defaultVariants: {

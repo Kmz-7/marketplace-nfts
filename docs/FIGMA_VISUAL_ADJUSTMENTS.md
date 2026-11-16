@@ -50,34 +50,157 @@ O Figma orienta a identidade, a hierarquia e a composição das telas. Quando in
 | Busca do cabeçalho | O ícone de lupa não oferecia uma busca no contexto da tela. | O botão abre o campo “Busque um NFT” e mostra até dois resultados flutuantes com imagem, nome e preço; cada resultado abre o detalhe do item. | `src/components/layout/header-nft-search.tsx`, `src/components/layout/site-header.tsx`, `src/routes/nft.tsx` |
 | Página Criadores | O card centralizava os textos, incluía CTA e misturava o fundo da arte com o conteúdo editorial. | Título e descrição ficam no topo, o CTA foi removido, a arte usa moldura `bg-card` com `p-4` e um nome fictício de autor fica no rodapé do conteúdo. As sugestões têm título com borda inferior e faixa horizontal com as duas entradas cadastradas. | `src/pages/creators/creators-page.tsx`, `src/pages/creators/creator-data.ts` |
 | Página Aprenda | A seção seguinte começava perto demais do fim da reportagem e “Aprenda mais” não seguia o cabeçalho dos destaques nem tinha navegação horizontal. | Ampliado o intervalo entre reportagem e seção; o título usa `primary` e borda inferior, e as notícias navegam em faixa horizontal com cards mais largos e imagens maiores. | `src/pages/learn/learn-page.tsx`, `src/pages/learn/components/learn-more-carousel.tsx` |
+| Sugestões de criadores | Os cards da página Criadores divergiam dos banners de lançamento que apresentam as mesmas campanhas na Home. | Reutilizado `PromoBanner` em uma grade de duas colunas, mantendo o mesmo arranjo de arte, textos e ação. | `src/pages/creators/creators-page.tsx`, `src/pages/home/components/promo-banner.tsx` |
+| Navegação editorial | O breadcrumb incluía “Mercado” entre Início e as páginas editoriais de Criadores e Aprenda. | As rotas editoriais mostram apenas “Início / Criadores” ou “Início / Aprenda”; o componente compartilhado mantém “Mercado” por padrão nas demais rotas. | `src/pages/marketplace/components/marketplace-breadcrumb.tsx`, `src/pages/creators/creators-page.tsx`, `src/pages/learn/learn-page.tsx` |
+| Respiro antes do rodapé | Nas páginas internas, o último componente ficava perto demais do rodapé; a distância da Home já estava adequada. | Acrescentado padding inferior ao contêiner compartilhado das demais rotas, preservando a Home como estava. | `src/components/layout/app-layout.tsx` |
+| Cards de Aprenda mais | A seção usava controles de seta no cabeçalho e cards diferentes do padrão de quatro colunas do Diário da Cunhagem. | O seletor de setas foi removido; os cards compartilham o componente da Home, aparecem em quatro colunas no desktop e são navegados por indicadores abaixo. Dois artigos demonstrativos adicionais mantêm quatro recomendações além da notícia aberta; a Home preserva seus quatro cards originais. | `src/pages/learn/components/learn-more-carousel.tsx`, `src/pages/learn/components/learning-article-card.tsx`, `src/pages/home/components/home-journal.tsx`, `src/pages/learn/article-data.ts` |
+| Tipografia dos cards editoriais | Títulos e descrições da Home e de Aprenda mais usavam escalas maiores, e os títulos podiam empurrar a ação para linhas diferentes. | Títulos em `text-md`, descrições em `text-sm` limitadas a duas linhas e títulos curtos; o botão `Ler mais` fica alinhado na base do card em ambas as seções. | `src/pages/learn/components/learning-article-card.tsx`, `src/pages/learn/article-data.ts` |
+| Cards de avaliações | O detalhe ainda mostrava apenas uma mensagem genérica, sem avaliações de colecionadores. | Cards com borda sutil e fundo translúcido alinhados ao toast, avatar circular, nota em estrelas, comentário colapsado em duas linhas e controle de expansão. | `src/pages/marketplace/components/nft/nft-review-card.tsx`, `src/pages/marketplace/components/nft/nft-reviews.tsx` |
+| Conteúdo de Criadores | A página apresentava apenas uma descrição curta abaixo do título. | Incluída uma biografia demonstrativa em Lorem Ipsum para preencher o bloco editorial, sem alterar os textos das campanhas da Home. | `src/pages/creators/creator-data.ts`, `src/pages/creators/creators-page.tsx` |
 | Newsletter | O input e o botão do rodapé tinham foco e bordas separados, sem confirmação de envio. | O input e Enviar formam um único grupo com foco compartilhado e exibem toast de sucesso ao enviar. | `src/components/layout/site-footer.tsx` |
 | Transparência das mensagens | O toast de ação e o painel da busca tinham superfície opaca em relação ao cabeçalho translúcido. | Ambos usam fundo com opacidade e `backdrop-blur-md` para manter contraste e deixar a página aparecer suavemente ao fundo. | `src/components/marketplace-action-toast.tsx`, `src/components/layout/header-nft-search.tsx` |
 | Limpeza da newsletter | O e-mail continuava no campo após a confirmação simulada. | Cinco segundos depois do toast, a página recarrega para limpar o campo; o formulário continua marcado como simulação enquanto não houver endpoint de inscrição. | `src/components/layout/site-footer.tsx` |
 | Selo de raridade | A badge ficava colada à borda superior e esquerda da arte. | Recuada para `top-3 left-3`, criando o efeito flutuante sobre a imagem. | `src/pages/home/components/home-nft-card.tsx` |
 
-## Verificação
+## Revisão das seis telas `Mobile/` — 16/11/2026
 
-- A revisão anterior executou `npm run build` e `git diff --check` sem erros e conferiu Home e carrinho em 390 px e 1440 px.
-- A revisão anterior concluiu `npm run build` e `git diff --check` sem erros; a geração de rotas incluiu `/creators` e `/learn` em `src/routeTree.gen.ts`.
-- Nesta revisão, `npm run build` e `git diff --check` concluíram sem erros.
-- No navegador em 1440 px, conferi o card de Oferta limitada, os estados da busca e do toast, os dois cards de Criadores e o carrossel Aprenda mais com imagens maiores. O toast e a busca agora usam `bg-card/85` e `backdrop-blur-md`. No detalhe do Sage Nomad #009, mudar de `1/1` para `1/10` alterou o preço de 1,69 ETH para 1,15 ETH após o skeleton.
-- O console do navegador não apresentou erros nesta conferência. Não foram feitas novas medições em 390 px ou 768 px; a recarga de cinco segundos da newsletter também não foi aguardada manualmente.
-- No navegador em 1440 px, confirmei a busca do cabeçalho com até dois resultados e a navegação para o NFT selecionado; no detalhe, confirmei a troca entre miniaturas, a seleção de edição, a compra com quantidade 2 e a chegada ao carrinho com uma única linha do produto.
-- Também confirmei que favoritar como visitante abre o diálogo de login sobre a rota atual, que “Conectar e finalizar” abre o mesmo diálogo sem sair do carrinho, e que as páginas Criadores e Aprenda mostram o conteúdo escolhido e as sugestões correspondentes.
-- O toast da newsletter e a retomada automática de favorito após autenticação continuam sem validação manual nesta revisão; ambos foram revisados no código.
+As seis composições mobile foram comparadas com os frames próprios no Figma. As diferenças intencionais entre mobile e desktop foram preservadas. A implementação e a conferência responsiva consideram 390, 768 e 1440 px.
 
-## Pontos que permanecem ambíguos
+| Frame | Ajustes aplicados | Implementação |
+| --- | --- | --- |
+| `Mobile/Início` | Composição própria com barra de busca/filtro, banner compacto, navegação por categorias, catálogo em duas colunas (escalonadas no Figma; alinhadas desde a revisão 5) e navegação fixa inferior. Os títulos e preços dos cards usam escala compacta no celular para que nomes e valores promocionais caibam sem corte ou quebra. O banner manteve sua tipografia original. | `src/pages/home/home.page.tsx`, `src/pages/home/components/mobile-home.tsx`, `src/pages/home/components/mobile-home-toolbar.tsx`, `src/pages/home/components/mobile-home-catalog.tsx`, `src/pages/home/components/home-nft-card.tsx` |
+| `Mobile/Detalhes do NFT` | Cabeçalho próprio com voltar e favorito, sem breadcrumb desktop; arte quadrada em destaque; informações e edições; ações de compra fixas na base. Mantidos skeleton e seleção de miniaturas onde a composição da tela permite. | `src/pages/marketplace/pages/nft-page.tsx`, `src/pages/marketplace/components/nft/nft-gallery.tsx`, `src/pages/marketplace/components/nft/nft-purchase-panel.tsx`, `src/pages/marketplace/components/mobile-marketplace-header.tsx` |
+| `Mobile/Carrinho de NFTs` | Tela ocupa a viewport; lista rola em sua própria área e resumo/cupom/CTA permanecem ancorados embaixo. A linha do item reserva a linha inferior para quantidade e remoção, evitando cortar o nome e o preço. | `src/pages/marketplace/pages/cart-page.tsx`, `src/pages/marketplace/components/cart/cart-items-section.tsx`, `src/pages/marketplace/components/cart/cart-summary.tsx` |
+| `Mobile/Pagamento` | Tela própria com carteiras salvas, badge de carteiras compatíveis, as três opções do frame mobile, total e botão de confirmação fixo na base. WalletConnect é mantida como opção do frame mobile; o seletor desktop continua com MetaMask e Coinbase. | `src/pages/marketplace/pages/payment-page.tsx`, `src/pages/marketplace/components/payment/mobile-payment-view.tsx`, `src/pages/marketplace/components/payment/wallet-selector.tsx` |
+| `Mobile/Login` | Formulário em tela cheia, com composição e espaçamento próprios; no desktop, o login continua como diálogo sobre a Home. | `src/pages/marketplace/pages/auth-page.tsx`, `src/pages/marketplace/components/auth/auth-form.tsx`, `src/pages/marketplace/components/auth/desktop-auth-dialog.tsx` |
+| `Mobile/Cadastro` | Mesmo tratamento de viewport cheia, com campos específicos de cadastro; preservado o diálogo desktop distinto. | `src/pages/marketplace/pages/auth-page.tsx`, `src/pages/marketplace/components/auth/auth-form.tsx`, `src/pages/marketplace/components/auth/desktop-auth-dialog.tsx` |
 
-1. A lupa da referência não tem comportamento descrito. Foi implementada uma prévia ampliada em diálogo com ícone `ZoomIn`; confirmar se esse é o sentido esperado para a ação.
-2. O comentário #69 do Figma menciona um ajuste na apresentação do nome e do preço do NFT, mas não especifica posição, distância ou alinhamento. A composição foi mantida.
-3. Não há uma medida explícita para a distância entre texto e imagem nos banners promocionais. O conteúdo usa o padding regular do componente shadcn.
-4. A composição dos banners e imagens muda entre desktop e mobile; essas diferenças foram preservadas. A tipografia do banner principal da Home também foi mantida conforme a orientação recebida.
-5. A página de Criadores usa as duas campanhas da Home como conteúdo demonstrativo; não existem perfis editoriais de criadores separados associados a esses cards.
-6. O contrato de sessão existente guarda nome e e-mail, mas não nome de usuário, carteira ou nome ENS. O pagamento preenche os campos cobertos pelo perfil atual e deixa os demais campos sem valor.
-7. Os valores por edição agora são dados sintéticos do mock, com fatores demonstrativos ancorados no preço base; precisam ser substituídos por preços definidos pelo backend real.
-8. A busca usa as oito peças de demonstração em `marketplace-data.ts`; um endpoint de busca ainda não está disponível neste frontend.
-9. O formulário de newsletter exibe a confirmação solicitada, mas não persiste o e-mail porque o projeto não tem endpoint de inscrição.
+O detalhe e o carrinho foram conferidos com itens do cenário de demonstração. Um acesso direto ao pagamento sem sessão/carrinho segue a proteção do fluxo; a captura da tela de pagamento foi feita após autenticar e iniciar a compra.
+
+## Desempenho e Lighthouse — 16/11/2026
+
+O desafio pede auditoria da Home e do detalhe em desktop e mobile, três medições por rota/perfil, reporte das medianas e metas de Performance ≥90, Acessibilidade ≥95, Boas práticas ≥95 e SEO ≥90. Os comandos, configurações e relatórios permanecem reproduzíveis via `lighthouserc.desktop.json`, `lighthouserc.mobile.json` e `npm run audit:lighthouse*`.
+
+- As artes originais PNG tinham cerca de 1,8–2 MB cada. Foram geradas versões WebP de 1000 px (aprox. 76–106 KB) e 512 px (aprox. 21–28 KB), com `srcSet`, preload e prioridade para a imagem inicial. O favicon também foi reduzido para 64 px.
+- O cliente MSW e o Socket.IO foram retirados do caminho síncrono de entrada. No mobile, a inicialização do MSW começa 700 ms após os dois primeiros frames; Home e detalhe mostram fixtures nesse intervalo, e as chamadas seguintes continuam passando pelos handlers. Isso reduz o trabalho concorrente com a primeira pintura sem remover funcionalidades ou assets da auditoria.
+- O diálogo de autenticação desktop é carregado sob demanda, pois não aparece na primeira tela. Isso preserva seu comportamento e diminui código não usado na entrada.
+- A primeira medição com agregação pela mediana apontou custo de avaliação JavaScript no bundle principal e no runtime de mocks, além de código de avaliações e carrossel sendo preparado antes de aparecer. As avaliações agora carregam quando a aba é aberta e os cards relacionados entram quando o usuário se aproxima da seção; skeletons preservam os estados de carregamento. O download das imagens usadas em diálogos de prévia também começa somente ao abrir o diálogo.
+- O relatório ainda sinaliza código JavaScript que não participa da primeira tela (aprox. 124 KiB na Home mobile e 120 KiB no detalhe). O LCP simulado mobile permanece mais alto do que desktop, então o corte foi concentrado em preparar menos conteúdo abaixo da dobra antes da primeira interação, sem desativar imagens, fontes ou funcionalidades.
+
+| Perfil | Página | Performance mediana | Acessibilidade | Boas práticas | SEO | LCP mediano | CLS | TBT mediano |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Desktop | Início | 99 | 100 | 96 | 100 | 0,91 s | 0 | 6 ms |
+| Desktop | Detalhes do NFT | 100 | 100 | 96 | 100 | 0,82 s | 0 | 0 ms |
+| Mobile | Início | 90 | 98 | 96 | 100 | 3,43 s | 0 | 118 ms |
+| Mobile | Detalhes do NFT | 91 | 100 | 96 | 100 | 3,38 s | 0 | 96 ms |
+
+A auditoria foi executada no Lighthouse 13.6.0 com Chrome 159, build otimizado e MSW habilitado. O mobile emula Moto G Power (2022); desktop usa Chrome headless. Cada valor da tabela é a mediana de três medições da respectiva rota; os quatro resultados de Performance agora atingem a meta do desafio. Os relatórios completos gerados ficam em `.lighthouseci/` no checkout local.
+
+## Verificação desta revisão
+
+- `npm run build`: passou (inclui `tsc -b`).
+- `npm run lint`: sem erros; nove avisos existentes de `react-refresh/only-export-components`.
+- `npm run test:e2e`: 12/12 passaram em Chromium desktop e mobile.
+- `npm run audit:lighthouse` e `npm run audit:lighthouse:mobile`: seis medições por comando, três por página; os resultados detalhados ficam em `.lighthouseci/`.
+- Conferência responsiva em 390, 768 e 1440 px: não foi encontrado overflow horizontal indevido nas rotas verificadas.
+- Capturas de Home, detalhe, carrinho, pagamento, login e cadastro foram revisadas a 390 px. A verificação visual encontrou e corrigiu os títulos/preços cortados na Home e o nome comprimido no carrinho.
+- `git diff --check`: passou.
+
+## Revisão mobile 2 (comparação com os frames `Mobile/`)
+
+Comparação feita entre os frames `Mobile / Início` (`14:5226`), `Mobile / Detalhes do NFT` (`15:5536`), `Mobile / Carrinho de NFTs` (`16:360`), `Mobile / Pagamento` (`16:748`), `Mobile / Login` (`16:1022`) e `Mobile / Cadastro` (`16:1228`), com 414 px, e o app em 390 px. Tamanhos de fonte do Figma foram mapeados para a escala do projeto: 12 → `xs`, 13/14 → `sm`, 15/16 → `md`, 18 → `lg` e 20 → `xl`. A cor `#B39463` do Figma (placeholders e metadados) não virou token, para respeitar o limite de cores de texto; usa `muted-foreground/70`.
+
+### Base compartilhada
+
+- `Button` ganhou as variantes `gradient` (CTAs e filtro com gradiente de `primary`), `surface` (voltar, coração, carrinho secundário e −/+ do carrinho) e o tamanho `cta` (60 px).
+- Novo token `surface-raised` (`#2F1D15`, "Surface Raised" no Figma) e utilitário `surface-gradient` (gradiente `card → surface-raised`) para a moldura dos cards da Home e o topo do detalhe do NFT.
+- Badge com a variante `ribbon` e `QuantityButton` com `tone="surface"`.
+- Assets exportados do Figma: `mobile-hero-circles.svg` (círculos do banner; substituiu `mobile-hero-mask.svg` na revisão 4), `mobile-tab-bar.svg` (barra com o recorte central) e as marcas `google.svg`/`facebook-brand.svg` (não há ícones equivalentes no Lucide nem no iconsax). A marca do Google foi montada a partir dos sete vetores do Figma, sem redesenho.
+
+| Área | Inconsistência observada no Figma | Ajuste aplicado |
+| --- | --- | --- |
+| Botões mobile | CTAs em pílula e botões de voltar e central circulares, em conflito com a regra `rounded-lg` | Mantido `rounded-lg` por decisão do usuário; altura de 60 px e gradiente seguem o Figma. O botão de scan virou exceção na revisão 3. |
+| Home / cards | O coração aparece dentro da arte (P‑1), fora dela (P‑2/P‑4) ou não aparece (P‑3) | Coração de 28 px no canto superior direito da arte em todos os cards. |
+| Home / cards | A moldura alterna o respiro de 12/20 px entre o topo e a base em cards vizinhos | Substituído na revisão 3 por moldura uniforme. |
+| Home / cards | Nome em 15 px trunca na coluna de 390 px | Nome em `sm` e preço em `md` bold. |
+| Home / RARO | Retângulo de cantos retos em 13 px, colado à borda | Badge `ribbon` em `xs`, colada à borda esquerda e com cantos direitos arredondados. |
+| Home / tab bar | Recorte côncavo desenhado como vetor de largura fixa (414 px) | SVG esticado na largura da barra (até 512 px); o botão central fica centralizado no recorte. Ícones iconsax `Bold` mantêm `size-4`, a regra do projeto, em vez de 20 px. |
+| Home / banner | Pontos de 7 px, menores que os de outros carrosséis | Substituído na revisão 3 pela versão compacta. |
+| Detalhe do NFT | As edições aparecem como "1/10, 1/10, 1/50, ABERTA" (duplicada) | Mantidas as edições dos dados: 1/1, 1/10, 1/50 e ABERTA. |
+| Detalhe do NFT | O botão de zoom não existe no Figma | Mantido por ser funcionalidade existente. |
+| Carrinho | A lixeira aparece só no item 3, sobreposta ao "+" | Lixeira em todos os itens (posição revista na revisão 3). |
+| Carrinho | Miniatura de 100 px | Mantidos 96 px (`image-thumbnail` mobile) para igualar pagamento e confirmação. |
+| Carrinho / resumo | "Desconto do lançamento" em 15 px não cabe ao lado do valor em 390 px | Linhas do resumo em `sm`; total em `md`/`lg`. |
+| Cabeçalho mobile | O título "Pagamento com carteira" fica à direita do voltar, e não centralizado na largura | Substituído na revisão 3: título centralizado na largura toda. |
+| Cadastro | Placeholder "Nome de usuário" centralizado, os demais à esquerda | Todos alinhados à esquerda. |
+| Login / Cadastro | Logo KURIO em 32 px, fora da escala | Exceção tipográfica `.brand-logo` registrada no `AGENTS.md`. |
+| Login / Cadastro | "Novo na Kurio? Crie uma conta" num único tom | O link continua em `foreground` para se distinguir do texto (acessibilidade). |
+
+### Pontos ainda aproximados
+
+- O recorte da tab bar se deforma levemente entre 390 e 512 px, porque o vetor original tem 414 px.
+
+## Revisão mobile 3 (UX: proporções e fontes)
+
+O Figma mobile reproduzido fielmente na revisão 2 trazia fontes grandes e componentes desproporcionais para telefones. Esta revisão se afasta do Figma onde ele prejudica a leitura em 320–425 px.
+
+| Área | Problema no Figma (ou na reprodução fiel) | Ajuste aplicado | Onde |
+| --- | --- | --- | --- |
+| Tipografia mobile | Títulos de 20 px e textos de 15/16 px ocupavam a tela toda e forçavam truncamentos | Abaixo de `md`, a escala inteira desce um degrau por variáveis CSS: xl 18, lg 16, md 14, sm 12 e xs 11 px. Uma regra só, sem classes `max-md:text-*` espalhadas. | `src/styles.css` (`@media (max-width: 767px)`), `AGENTS.md` |
+| Home / banner | Com texto e arte lado a lado, o texto quebrava em 4 linhas abaixo de 425 px | Abaixo de 425 px (breakpoint `xs`), a arte vem primeiro em 16:9 e o texto ocupa a largura toda. De 425 a 767 px, mantém a composição do Figma. | `mobile-home-hero.tsx`, `@theme --breakpoint-xs` |
+| Home / banner | Indicadores de 12 px competiam com o texto | Classe `.carousel-indicator-compact` (6 px), só no banner mobile. | `styles.css`, `mobile-home-hero.tsx` |
+| Home / abas | "Todos os NFTs", "Novos lançamentos" e "Em alta" encavalavam em 390 px | Rótulos encurtados para "Todos", "Lançamentos" e "Em alta". | `mobile-home-catalog.tsx` |
+| Home / cards | Colunas escalonadas deixavam os cards desalinhados em telas estreitas; a moldura tinha 4 px nas laterais e 16 px em cima/baixo | Abaixo de 425 px, as duas colunas ficam alinhadas (sem deslocamento) e com espaçamento menor (o escalonamento saiu de todo o mobile na revisão 5). A moldura tem respiro uniforme de 10 px, deixando o fundo visível como no desktop. | `mobile-home-catalog.tsx`, `home-nft-card.tsx` |
+| Home / scan | O botão circular tinha ficado `rounded-lg`, com ícone pequeno | Novo tamanho `size="fab"` no `Button`: única exceção circular (`rounded-full`), com ícone de 28 px. | `button.tsx`, `mobile-home-navigation.tsx` |
+| Acesso mobile | O diálogo de login abria deslocado para fora da tela: o `translate` centralizador do Tailwind 4 continuava ativo (a classe antiga só zerava `transform`) | `DialogContent` ganhou `variant="fullscreen"`, que zera o translate e ocupa a viewport. O `AuthDialogProvider` abre `MobileAuthDialog` (telas Mobile / Login e Cadastro) abaixo de `md` e `DesktopAuthDialog` acima. | `dialog.tsx`, `mobile-auth-dialog.tsx`, `auth-dialog-provider.tsx` |
+| Cabeçalho mobile | Título fora do centro e voltar disputando espaço com ele | Voltar flutuante (absoluto, com sombra, fora do fluxo); título centralizado na largura toda. | `mobile-marketplace-header.tsx` |
+| Carrinho / itens | Quantidade espremida junto ao preço e lixeira grande | Lixeira compacta (24 px, ícone de 14 px) no canto superior direito. A posição da quantidade foi revista na revisão 4. | `cart-items-section.tsx` |
+| Pagamento | Espaços irregulares (12–20 px) entre títulos e opções; total solto à direita | Cada seção tem título + 12 px + opções, e as seções ficam a 24 px uma da outra. O total ganhou um card com gradiente de superfície, rótulo, nota "Taxa de rede inclusa" e valor destacado. | `mobile-payment-view.tsx` |
+
+## Revisão mobile 4 (UX: refinamentos e telas sem frame mobile)
+
+| Área | Problema | Ajuste aplicado | Onde |
+| --- | --- | --- | --- |
+| Home / banner | Os círculos decorativos saíam ovais (SVG esticado) e cortados em linha reta, porque ultrapassam o retângulo de 366×190 do Figma | `mobile-hero-circles.svg` traz só os círculos, inteiros (viewBox ampliado), sem distorção: centralizados acima de 425 px e atrás do texto abaixo disso (ampliados para o painel todo na revisão 5). O tom de fundo do banner virou `bg-primary/15`. | `mobile-home-hero.tsx` |
+| Botões mobile | CTAs de 60 px pesavam demais em telas de 640–844 px de altura | O tamanho `cta` caiu para 48 px; o carrinho secundário do NFT acompanha (48 px). | `button.tsx`, `nft-purchase-panel.tsx` |
+| Carrinho / quantidade | Os controles de 24 px no meio do card competiam com nome e preço | `QuantityButton` ganhou `scale="mini"` (20 px, ícone de 12 px), na base do card, alinhado ao preço e à direita. | `quantity-button.tsx`, `cart-items-section.tsx` |
+| Detalhe do NFT | O ícone de carrinho levava ao carrinho, igual a "Comprar NFT" | O ícone só adiciona o item (com edição e quantidade) e mostra o aviso com "Ir para o carrinho". Apenas "Comprar NFT" navega. | `nft-page.tsx`, `nft-purchase-panel.tsx` |
+| Avisos (toast) | No mobile, o aviso cobria a barra de compra e a tab bar fixas | `mobileOffset` de 168 px no `Toaster`. | `main.tsx` |
+| Confirmação | "ID do token: #0042" nunca cabia ao lado da miniatura de 96 px. Na tabela de 3 colunas, nome e "(x 1)" colidiam, e os totais desalinhavam quando um valor quebrava | O ID desce para a linha de baixo (também no resumo do checkout desktop). No mobile, os itens viram lista com quantidade e subtotal na base, e os totais viram linhas rótulo/valor (`dl`). | `order-confirmation-card.tsx`, `checkout-items-summary.tsx` |
+| Favoritos | A tela tinha só um título solto e a grade (sem frame no Figma) | Cabeçalho mobile com voltar, painel-resumo com contagem, grade 2/3/4 colunas e estado vazio com ícone, texto e CTA. | `favorites-page.tsx` |
+| Perfil / Carteiras | No mobile, o card de navegação ocupava o topo, sem voltar nem menu | Cabeçalho com voltar e ícone de menu. O menu abre em tela cheia, com fundo translúcido e desfoque (como o toast e os menus desktop), listando os links da conta (`AccountNavigation variant="list"`). | `account-page.tsx`, `account-mobile-menu.tsx`, `account-navigation.tsx` |
+
+## Revisão mobile 5 (UX: alinhamento, banner e funcionalidades sem desenho no Figma)
+
+| Área | Problema | Ajuste aplicado | Onde |
+| --- | --- | --- | --- |
+| Home / cards | A coluna direita escalonada 32 px (Figma) voltava a partir de 425 px; como nomes e preços têm alturas diferentes, as linhas desencontravam entre 375 e 425 px | O escalonamento saiu em todo o mobile: grade de 2 colunas (3 a partir de 640 px), com cards alinhados por linha. | `mobile-home-catalog.tsx` |
+| Home / banner | O Figma sobrepunha uma segunda arte (Sage Nomad, 58 px) no canto da arte principal; ela cobria parte da obra e não tinha função | A arte sobreposta foi removida. | `mobile-home-hero.tsx` |
+| Home / banner | Abaixo de 425 px os círculos ficavam só atrás do texto e o topo do painel ficava liso | Os mesmos círculos são ampliados pela altura do painel (`h-full`, centralizados), cobrindo o banner todo sem deformar. | `mobile-home-hero.tsx` |
+| Home / busca e filtros | O Figma desenha o campo e o botão de filtro, mas não o comportamento | A busca consulta `GET /api/nfts?q=` (com debounce de 300 ms) e o banner some enquanto há busca ou filtro. O botão abre os mesmos filtros do desktop (em tela cheia desde a revisão 6): coleção, faixa de preço e rede, compartilhados em `HomeCatalogFilters`. O botão mostra quantos filtros estão ativos, e a tela tem "Limpar" e "Ver N resultados". As abas Todos/Lançamentos/Em alta passaram a reordenar o catálogo, e a grade mostra a contagem e um estado vazio com "Limpar filtros". | `mobile-home-toolbar.tsx`, `mobile-home-filters-dialog.tsx`, `home-catalog-filters.tsx`, `home.page.tsx` |
+| Home / scan | O botão central não tinha ação definida no Figma | Abre "Verificar NFT" em tela cheia: lê o QR do certificado da obra (`kurio:nft:<id>`) ou um link compartilhado do NFT e consulta `POST /api/scan/resolve`. A câmera usa `BarcodeDetector`; sem suporte ou sem permissão, a tela explica o motivo e aceita o código digitado. O resultado mostra o selo de autenticidade (ou "Link do catálogo · sem certificado"), os dados do token e o preço atualizado por `nft.updated`, com "Ver NFT" e "Ler outro". | `mobile-scan-dialog.tsx`, `use-qr-scanner.ts`, `scan.handlers.ts` |
+| Perfil / menu mobile | Título e itens alinhados à esquerda numa sobreposição de tela cheia | Título e itens centralizados. | `account-mobile-menu.tsx`, `account-navigation.tsx` |
+
+## Revisão mobile 6 (padrões do sistema)
+
+| Área | Problema | Ajuste aplicado | Onde |
+| --- | --- | --- | --- |
+| Home / filtros | A gaveta inferior cobria só parte da tela e tinha bordas claras (topo, divisórias e rodapé) que destoavam das outras sobreposições | Filtros em tela cheia (`DialogContent variant="fullscreen"`), no mesmo padrão do leitor e do menu do perfil: título centralizado, fechar no canto, só a lista rola e as ações ficam fixas na base. Sem bordas. | `mobile-home-filters-dialog.tsx`, `home-catalog-filters.tsx` |
+| Estados de erro e vazio | Cada página tinha seu formato: card centralizado, card tracejado, parágrafo com borda, `Alert` com texto balanceado em meia largura | `StatusAlert` é o padrão: ícone à esquerda, título opcional, texto na largura toda e ação compacta (`StatusAlertAction`, 32 px). Está aplicado em catálogo (desktop e mobile), NFT inexistente, carrinho e checkout vazios, favoritos vazios, avaliações, cotação, pedido indisponível, leitor e Atividade. Na Home, a ação passou a se chamar "Limpar filtros". | `status-alert.tsx`, `alert.tsx` (`variant="status"`) |
+| Cards / selo RARO | O selo colado à borda esquerda da moldura (Figma) destoava do desktop | O selo fica sobre a arte, com o mesmo recuo e altura do coração no mobile. A variante `ribbon` foi removida do `Badge`. | `home-nft-card.tsx`, `badge.tsx` |
+| Botões no mobile | Ações sozinhas na linha (Salvar alterações, Salvar carteira, Adicionar carteira, Voltar ao marketplace) ficavam com a largura do texto | Nova variante `width="mobile"` no `Button`: largura total abaixo de `md`. Virou regra no `AGENTS.md`. | `button.tsx`, `profile-editor.tsx`, `wallet-settings.tsx`, `order-result-state.tsx`, `order-confirmation-card.tsx` |
+| Carteiras | "Adicionar carteira" no topo repetia a ação do card secundário; o título "Carteiras" aparecia duas vezes no mobile | O botão do topo saiu, e o do card passou a se chamar "Adicionar carteira". O título da seção fica só no desktop. | `wallet-settings.tsx` |
+| Perfil / menu | Itens centralizados com larguras diferentes deixavam ícones e textos desalinhados entre si | Bloco centralizado com a largura exata do rótulo mais longo ("Lista de interesse"): ícones e primeiras letras na mesma margem, e o conjunto equidistante das laterais. "Atividade" leva a `/activity` (histórico de compras, com o aviso "Página em desenvolvimento") e "Lista de interesse" leva aos favoritos. | `account-navigation.tsx`, `account-page.tsx`, `routes/activity.tsx` |
+| NFT inexistente | O mobile mostrava o breadcrumb do desktop, sem voltar | Cabeçalho mobile com voltar; breadcrumb só no desktop. | `nft-page.tsx` |
+
+## Questões que ainda precisam de decisão
+
+1. No frame mobile da Home, a arte/identificação de Golden Beat aparece como `#207`, enquanto o catálogo demonstrativo possui `Golden Beat #287`. Mantive o dado da fixture e não alterei a identidade do produto.
+2. A referência da badge `RARO` parece associá-la a outra arte de macaco de óculos; a fixture atual atribui o selo a `Emerald Ape #042`. Confirmar qual NFT deve receber a badge.
+3. As duas carteiras exibidas no pagamento mobile (`nova.kurio.eth` e `0xA91F...E82C`) são dados demonstrativos locais; o perfil/contrato atual não fornece carteiras salvas reais.
+4. Os valores por edição, nomes de autores e parte do conteúdo editorial são demonstração da API mock e devem ser substituídos pelos dados definidos para a integração real.
+5. O formato do QR do certificado (`kurio:nft:<id>`) foi definido para a demonstração; um certificado real precisaria de assinatura verificável (ex.: hash do contrato + token assinado pelo emissor). Também falta decidir onde o certificado é emitido (página do NFT, confirmação do pedido ou PDF).
 
 ## Escopo
 
-Os ajustes visuais normalizam inconsistências observadas sem alterar a ideia geral dos componentes. Os fluxos de carrinho, favoritos e autenticação foram incluídos porque fazem parte do comportamento solicitado para as ações dos cards. Também foram adicionadas rotas editoriais e de criadores usando o conteúdo demonstrativo existente. Cada grupo de correções inclui comentários curtos no código que explicam a divergência observada e o critério usado. Os frames desktop e mobile continuam seguindo suas composições próprias.
+Os ajustes mobile seguem as composições próprias dos frames `Mobile/`, sem forçar o layout desktop em uma viewport menor. Inconsistências em componentes equivalentes foram normalizadas; divergências intencionais entre as telas foram mantidas. Os comentários próximos aos trechos de UI registram os problemas do Figma observados e a decisão adotada.
