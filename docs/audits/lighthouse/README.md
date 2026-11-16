@@ -1,6 +1,6 @@
 # Auditoria Lighthouse — 16/11/2026
 
-As auditorias usam o build de produção com `VITE_ENABLE_MOCKS=true`, sem serviços privados. Cada rota foi medida três vezes; os valores abaixo são medianas. Os arquivos `.report.html` e `.report.json` ao lado deste documento são a evidência completa das seis execuções de cada perfil.
+As auditorias usam o build de produção com `VITE_ENABLE_MOCKS=true`, sem serviços privados. Cada rota foi medida três vezes; os valores abaixo são medianas. O `manifest.json` de cada perfil aponta para as seis execuções atuais; relatórios com timestamps anteriores foram mantidos como histórico de auditoria.
 
 ## Ambiente reproduzível
 
@@ -15,13 +15,13 @@ As auditorias usam o build de produção com `VITE_ENABLE_MOCKS=true`, sem servi
 
 | Perfil | Página | Performance | Acessibilidade | Boas práticas | SEO | LCP | CLS | TBT |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Desktop | Início | 97 | 100 | 100 | 100 | 1,21 s | 0 | 1 ms |
-| Desktop | Detalhes do NFT | 99 | 100 | 100 | 100 | 0,89 s | 0 | 0 ms |
-| Mobile | Início | 86 | 98 | 100 | 100 | 4,06 s | 0 | 77 ms |
-| Mobile | Detalhes do NFT | 90 | 100 | 100 | 100 | 3,64 s | 0 | 79 ms |
+| Desktop | Início | 98 | 100 | 100 | 100 | 1,19 s | 0,0004 | 0 ms |
+| Desktop | Detalhes do NFT | 99 | 100 | 100 | 100 | 0,90 s | 0 | 0 ms |
+| Mobile | Início | 86 | 98 | 100 | 100 | 4,14 s | 0 | 90 ms |
+| Mobile | Detalhes do NFT | 88 | 100 | 100 | 100 | 3,90 s | 0 | 113 ms |
 
 ## Resultado abaixo da meta
 
-A Home mobile fica quatro pontos abaixo da meta de Performance. O diagnóstico Lighthouse estima 121 KiB de JavaScript não utilizado na carga inicial, distribuídos entre o bundle da aplicação (aprox. 54 KiB) e o cliente/runtime do MSW (aprox. 67 KiB). Os recursos de imagem do banner são descobertos no documento inicial, têm prioridade alta e carregam rapidamente; o principal custo observado está no JavaScript da aplicação de demonstração com mocks ativos. A auditoria não desativa os mocks, imagens, fontes ou funcionalidades para elevar a pontuação.
+A Home mobile fica quatro pontos abaixo da meta de Performance e o detalhe fica dois pontos abaixo. O diagnóstico Lighthouse estima 121 KiB de JavaScript não utilizado na Home, distribuídos entre o bundle da aplicação (aprox. 53 KiB) e o cliente/runtime do MSW (aprox. 68 KiB); no detalhe, a estimativa é 119 KiB. Os recursos de imagem do conteúdo principal são descobertos no documento inicial e têm prioridade alta. Os handlers de perfil e scanner agora são carregados sob demanda, mas a medição manteve as estimativas de JavaScript não utilizado e não atingiu o alvo. A redução adicional exige rever o peso do cliente MSW e o código compartilhado da aplicação sem prejudicar a Home, o detalhe ou o backend demonstrativo. A auditoria não desativa mocks, imagens, fontes ou funcionalidades para elevar a pontuação.
 
 O alvo mobile não deve ser considerado atendido até que a mediana da Home chegue a 90. O comando Lighthouse mobile termina com código diferente de zero quando a meta falha, preservando essa validação automática.

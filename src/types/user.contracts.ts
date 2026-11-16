@@ -4,6 +4,30 @@ export interface UserContract {
   email: string
   avatarUrl: string
   createdAt: string
+  username?: string
+  ensName?: string
+  walletAlias?: string
+}
+
+export interface ProfileContract {
+  id: string
+  displayName: string
+  username: string
+  email: string
+  ensName: string
+  walletAlias: string
+  avatarUrl: string
+  createdAt: string
+}
+
+export type ProfileUpdateContract = Pick<
+  ProfileContract,
+  'displayName' | 'username' | 'email' | 'ensName' | 'walletAlias'
+>
+
+export interface PasswordUpdateContract {
+  currentPassword: string
+  newPassword: string
 }
 
 export interface SessionContract {

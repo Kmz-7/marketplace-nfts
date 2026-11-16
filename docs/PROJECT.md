@@ -2,25 +2,25 @@
 
 ## Estado para entrega — 16/11/2026
 
-- `npm ci`, `npm run typecheck` e `npm run build` passaram; `npm run lint` não tem erros e registra nove avisos não bloqueantes de Fast Refresh.
-- Playwright: 28 aprovados e dois ignorados por viewport, incluindo regressões visuais mobile/desktop de Home, detalhe, carrinho e pagamento.
-- Lighthouse desktop atende às metas. No mobile, detalhe atinge Performance 90 e a Home fica em 86; causa e relatórios estão em [`audits/lighthouse/README.md`](./audits/lighthouse/README.md).
-- A documentação de entrega cobre setup, credenciais fictícias, cenários, reset, comandos e arquitetura. A URL Vercel responde na Home, mas acesso direto a `/nft` e `/cart` ainda dá 404; `vercel.json` contém o rewrite que precisa ser publicado.
-- Limites de implementação ainda relevantes: favoritos e alterações de perfil/carteiras não persistem pela API; a suíte não cobre integralmente os 12 grupos E2E do enunciado. Consulte `README.md`, `ARCHITECTURE.md` e `MOCK_BACKEND.md` antes de declarar conformidade completa.
+- A entrega pública da Vercel foi confirmada pelo usuário. As mudanças locais desta revisão ainda precisam ser enviadas ao repositório para aparecer no deploy.
+- Build e typecheck passaram nesta revisão. ESLint não tem erros; mantém nove avisos não bloqueantes de Fast Refresh em arquivos existentes.
+- Playwright: 30 aprovados e dois skips de viewport em Chromium desktop e mobile; inclui a leitura, preenchimento, atualização e persistência do perfil autenticado.
+- Lighthouse desktop atende às metas. No mobile, Home marca 86 e detalhe 88 em Performance, abaixo do mínimo de 90; diagnóstico e relatórios estão em [`audits/lighthouse/README.md`](./audits/lighthouse/README.md).
+- O perfil e a senha agora persistem pela API simulada. Limites atuais: favoritos, edição de avatar e CRUD de carteiras; a suíte não cobre integralmente os 12 grupos E2E do enunciado. Consulte `README.md`, `ARCHITECTURE.md` e `MOCK_BACKEND.md` antes de declarar conformidade completa.
 
 ## Organização atual
 
 - `src/types/`: contratos compartilhados de usuário/sessão/erro, pedido e NFT.
-- `src/api/`: serviços REST tipados para autenticação, catálogo, carrinho/cotação e pedidos, todos via Axios.
+- `src/api/`: serviços REST tipados para autenticação, perfil, catálogo, carrinho/cotação e pedidos, todos via Axios.
 - `src/hooks/use-auth.ts`: consulta de sessão, mutations de login/cadastro/logout e sincronização do cache.
 - `src/mocks/fixtures/`: builders para duas contas de acesso, vinte perfis avaliadores, dois pedidos, 18 NFTs e avaliações.
-- `src/mocks/handlers/`: cadastro, login, sessão, logout, carrinho/cotação, pedidos e endpoints de catálogo/cenários.
+- `src/mocks/handlers/`: handlers por domínio; perfil e scanner são importados sob demanda, e avaliações acompanham o carregamento do detalhe.
 - `src/mocks/state/auth.store.ts`: contas e sessão simuladas persistidas, com senha derivada por PBKDF2 e sem senha em texto claro.
 - `src/mocks/socket/`: conexões Socket.IO simuladas pelo binding WebSocket do MSW.
 - `src/components/layout/`: layout padrão, header e footer compartilhados por todas as rotas.
 - `src/pages/home/home.page.tsx`: conteúdo da página inicial, renderizado dentro do layout padrão.
 
-O catálogo da Home é carregado por Axios + TanStack Query e interceptado pelo MSW. Os registros e eventos `nft.updated` compartilham estado em memória no worker; os cenários controláveis incluem sucesso, demora, falha de rede e HTTP 503. Cadastro, login, logout, consulta/expiração de sessão, carrinho, cotação, cupons, criação idempotente de pedidos e atualização `order.updated` estão integrados ao MSW. O checkout usa os itens do carrinho, e a confirmação lê o snapshot persistido pela API e reconcilia pedidos pendentes via socket e REST. Favoritos e mutações de perfil/carteiras continuam pendentes. O Figma confirma `#140D0A` em Color/Ink; outros tons em `src/styles.css` são aproximações visuais que precisam ser conferidas nos elementos correspondentes. Veja [MOCK_BACKEND.md](./MOCK_BACKEND.md) para credenciais, endpoints e cenários.
+O catálogo da Home é carregado por Axios + TanStack Query e interceptado pelo MSW. Os registros e eventos `nft.updated` compartilham estado em memória no worker; os cenários controláveis incluem sucesso, demora, falha de rede e HTTP 503. Cadastro, login, logout, consulta/expiração de sessão, leitura/edição de perfil e senha, carrinho, cotação, cupons, criação idempotente de pedidos e atualização `order.updated` estão integrados ao MSW. O checkout usa os itens do carrinho, e a confirmação lê o snapshot persistido pela API e reconcilia pedidos pendentes via socket e REST. Favoritos e CRUD de carteiras continuam pendentes. O Figma confirma `#140D0A` em Color/Ink; outros tons em `src/styles.css` são aproximações visuais que precisam ser conferidas nos elementos correspondentes. Veja [MOCK_BACKEND.md](./MOCK_BACKEND.md) para credenciais, endpoints e cenários.
 
 ### Endpoints simulados atualmente
 
@@ -32,6 +32,7 @@ O catálogo da Home é carregado por Axios + TanStack Query e interceptado pelo 
 - `POST /api/auth/register`: cria conta, valida campos, verifica conflito e inicia sessão.
 - `POST /api/auth/login`: autentica usuário e senha.
 - `GET /api/session` e `POST /api/auth/logout`: recuperam ou encerram a sessão persistente.
+- `GET /api/profile`, `PUT /api/profile` e `PUT /api/profile/password`: consultam/atualizam os dados e a senha do usuário autenticado.
 - `POST /api/mock/session/expire`: simula expiração de sessão.
 - `GET /api/users/:userId`: retorna uma conta seed ou cadastrada ou `404 USER_NOT_FOUND`.
 - `GET /api/cart`, `PUT /api/cart` e `POST /api/cart/quote`: carrinho, disponibilidade por edição e cotação.
@@ -195,7 +196,7 @@ Não deixe o checkout e a prova de uso da stack para o último momento. A ordem 
 - `GET /api/orders/:orderId`: retorna um pedido fixture (um confirmado e um pendente) ou `404 ORDER_NOT_FOUND`.
 - As três leituras usam `delay(350)` para tornar o estado de carregamento observável.
 
-Os formatos ficam em `src/types/`; os dados de exemplo em `src/mocks/fixtures/`; handlers agrupados por domínio em `src/mocks/handlers/`. A autenticação usa estado persistido no navegador, derivação PBKDF2 para as senhas e token de sessão com expiração. O catálogo mantém estado mutável em memória e envia `nft.updated` por Socket.IO. O carrinho e os pedidos usam estado persistente do mock; perfil e carteiras continuam pendentes. Veja [MOCK_BACKEND.md](./MOCK_BACKEND.md) para rotas, credenciais e cenários disponíveis.
+Os formatos ficam em `src/types/`; os dados de exemplo em `src/mocks/fixtures/`; handlers agrupados por domínio em `src/mocks/handlers/`. A autenticação usa estado persistido no navegador, derivação PBKDF2 para as senhas e token de sessão com expiração. O catálogo mantém estado mutável em memória e envia `nft.updated` por Socket.IO. O carrinho, os pedidos e perfil usam estado persistente do mock; favoritos e carteiras seguem pendentes. Veja [MOCK_BACKEND.md](./MOCK_BACKEND.md) para rotas, credenciais e cenários disponíveis.
 
 ## Componentes shadcn/ui disponíveis
 
@@ -205,4 +206,4 @@ Os componentes instalados estão em `src/components/ui/`, prontos para importaç
 
 O painel lateral de filtros da Home está em `src/pages/home/components/home-filter-sidebar.tsx`; os grupos de filtro ficam em `home-catalog-filters.tsx`, reaproveitados pela tela de filtros mobile (`mobile-home-filters-dialog.tsx`). Ele segue o frame com Coleções, Faixa de preço em ETH e Rede, composto com `Card`, `Checkbox`, `Label`, `Slider`, `Separator` e `Button` do shadcn. A estrutura visual está conectada à Home e os filtros são encaminhados para o catálogo via query/API.
 
-O layout compartilhado usa header responsivo com navegação desktop/mobile, menu mobile em `Sheet`, ações de busca/carrinho/entrada e footer. A rota raiz usa `AppLayout` para envolver o `Outlet` do TanStack Router. Autenticação, busca, carrinho/cotação, fluxo básico de pedido e atualização `order.updated` estão conectados. Favoritos persistidos por API e gravação de perfil/carteiras seguem pendentes; Playwright e Lighthouse foram executados, com a cobertura e os resultados documentados no README e em `docs/audits/lighthouse/`.
+O layout compartilhado usa header responsivo com navegação desktop/mobile, menu mobile em `Sheet`, ações de busca/carrinho/entrada e footer. A rota raiz usa `AppLayout` para envolver o `Outlet` do TanStack Router. Autenticação, busca, perfil, senha, carrinho/cotação, fluxo básico de pedido e atualização `order.updated` estão conectados. Favoritos e gravação de carteiras seguem pendentes; Playwright e Lighthouse foram executados, com a cobertura e os resultados documentados no README e em `docs/audits/lighthouse/`.

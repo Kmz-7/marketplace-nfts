@@ -6,6 +6,7 @@ Este documento registra a primeira etapa de integração do frontend com uma API
 
 - Cadastro, login, logout e consulta de sessão usam REST via Axios, TanStack Query e handlers MSW.
 - Contas e sessões de demonstração persistem em `localStorage`; as senhas são guardadas somente como hash PBKDF2 com salt, nunca em texto claro.
+- A página de perfil busca nome, usuário, e-mail, nome ENS e apelido da carteira por `GET /api/profile`; alterações e senha são validadas e persistidas no mock por usuário.
 - O cadastro valida nome, e-mail e tamanho da senha, impede e-mails duplicados e cria a sessão após sucesso. Login inválido, campos inválidos e conflitos retornam erros tipados.
 - Perfil, carteiras, pagamento e confirmação exigem uma sessão; o destino solicitado é preservado ao entrar e retomado após autenticar.
 - Sessões expiram após 30 minutos. O endpoint `POST /api/mock/session/expire` permite reproduzir expiração; `POST /api/mock/reset` restaura os usuários de demonstração e encerra a sessão.
@@ -25,7 +26,7 @@ Este documento registra a primeira etapa de integração do frontend com uma API
 
 ## Configuração
 
-`npm run prepare:msw` gera `public/mockServiceWorker.js` e registra `public/` como diretório do worker no `package.json`. Quando `VITE_ENABLE_MOCKS=true`, o React monta para mostrar a interface imediatamente; chamadas Axios aguardam a inicialização do worker via `waitForMockWorker()`. No mobile, a importação do worker é postergada por 700 ms para reduzir trabalho concorrente com o primeiro paint; operações REST ficam aguardando o worker.
+`npm run prepare:msw` gera `public/mockServiceWorker.js` e registra `public/` como diretório do worker no `package.json`. Quando `VITE_ENABLE_MOCKS=true`, o React monta para mostrar a interface imediatamente; chamadas Axios aguardam a inicialização do worker via `waitForMockWorker()`. No mobile, a importação do worker é postergada por 700 ms para reduzir trabalho concorrente com o primeiro paint; operações REST aguardam o worker. Handlers de perfil e scanner são carregados sob demanda pelo módulo de runtime; avaliações continuam no pacote principal porque são solicitadas na entrada do detalhe do NFT.
 
 As variáveis estão em `.env.example`:
 
@@ -51,6 +52,9 @@ O cliente Axios compartilhado fica em `src/lib/api-client.ts`. Serviços REST ti
 | `POST /api/mock/session/expire`     | Expira a sessão atual para desenvolvimento e demonstração.                                                             |
 | `GET /api/users/:userId`            | Retorna um usuário cadastrado ou `404 USER_NOT_FOUND`.                                                                 |
 | `GET /api/users`                    | Retorna os perfis seed, inclusive os vinte perfis fictícios usados pelas avaliações.                                   |
+| `GET /api/profile`                  | Retorna os campos da conta autenticada; exige sessão.                                                                  |
+| `PUT /api/profile`                  | Valida e persiste nome de exibição, nome de usuário, e-mail, ENS e apelido da carteira; exige sessão.                  |
+| `PUT /api/profile/password`          | Valida a senha atual e persiste novo hash PBKDF2; exige sessão.                                                         |
 | `GET /api/nfts`                     | Lista paginada; aceita `q`, `page`, `pageSize`, `sort`, `collection`, `network`, `minPrice` e `maxPrice`.              |
 | `GET /api/nfts/:nftId`              | Retorna um NFT ou `404 NFT_NOT_FOUND`.                                                                                 |
 | `GET /api/nfts/:nftId/reviews`      | Retorna avaliações do NFT, nota média, contagem e dados públicos do perfil avaliador.                                  |
@@ -132,4 +136,4 @@ O cenário `timeout-after-create` grava o pedido, devolve `504` na primeira resp
 
 ## Escopo ainda pendente
 
-Favoritos, mutações de perfil e carteiras ainda não usam endpoints REST. O formulário de colecionador no checkout continua demonstrativo; nome/e-mail são pré-preenchidos pela sessão, mas não são enviados junto à criação do pedido. Os fluxos comerciais usam preços e taxas sintéticos e não se conectam a carteiras, blockchain ou gateway de pagamento.
+Favoritos e operações CRUD de carteiras ainda não usam endpoints REST; avatar também não é editável. O formulário de colecionador no checkout continua demonstrativo; nome/e-mail são pré-preenchidos pela sessão, mas não são enviados junto à criação do pedido. Os fluxos comerciais usam preços e taxas sintéticos e não se conectam a carteiras, blockchain ou gateway de pagamento.

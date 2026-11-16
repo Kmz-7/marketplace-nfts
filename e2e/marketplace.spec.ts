@@ -149,6 +149,32 @@ test('favoritar solicita autenticação mantendo a página de detalhe', async ({
   await expect(page).toHaveURL(/\/nft\?item=emerald-ape-042/)
 })
 
+test('preenche e persiste os dados do perfil da conta autenticada', async ({ page }) => {
+  await page.goto('/profile')
+  await expect(page).toHaveURL(/\/login/)
+  await page.getByRole('textbox', { name: 'E-mail', exact: true }).fill('ada@example.test')
+  await page.locator('input[type="password"]').last().fill('KurioDemo123!')
+  await page.getByRole('button', { name: 'Entrar', exact: true }).last().click()
+  await expect(page).toHaveURL(/\/profile/)
+
+  const displayName = page.getByLabel('Nome de exibição')
+  await expect(displayName).toHaveValue('Ada Collectora')
+  await expect(page.getByLabel('Nome de usuário')).toHaveValue('ada-collectora')
+  const profileEmail = page.getByRole('textbox', { name: 'E-mail', exact: true })
+  await expect(profileEmail).toHaveValue('ada@example.test')
+  await expect(page.getByLabel('Nome ENS')).toHaveValue('ada.kurio.eth')
+  await expect(page.getByLabel('Apelido da carteira')).toHaveValue('Carteira principal')
+
+  await displayName.fill('Ada Colecionadora')
+  const saveResponse = page.waitForResponse(
+    (response) => response.url().endsWith('/api/profile') && response.request().method() === 'PUT',
+  )
+  await page.getByRole('button', { name: 'Salvar alterações' }).click()
+  expect((await saveResponse).ok()).toBe(true)
+  await page.reload()
+  await expect(page.getByLabel('Nome de exibição')).toHaveValue('Ada Colecionadora')
+})
+
 test('mantém Home, detalhe, carrinho e pagamento sem overflow em 768 px', async ({ page }) => {
   await page.setViewportSize({ width: 768, height: 900 })
   const expectNoHorizontalOverflow = async () => {

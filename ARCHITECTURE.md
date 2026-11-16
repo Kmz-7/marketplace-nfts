@@ -16,7 +16,7 @@ Páginas e componentes
 - Contratos de transporte ficam em `src/types/`; clientes REST em `src/api/`; eventos em `src/services/socket.ts`.
 - Fixtures, stores e handlers ficam em `src/mocks/fixtures/`, `src/mocks/state/` e `src/mocks/handlers/`.
 - `npm run dev:mocks` inicia Vite com `.env.mocks`. `VITE_ENABLE_MOCKS=true` também ativa MSW no build de demonstração.
-- A aplicação monta antes do worker. Axios e Socket.IO esperam `waitForMockWorker()`; no mobile, o carregamento do worker começa após 700 ms para aliviar o primeiro paint.
+- A aplicação monta antes do worker. Axios e Socket.IO esperam `waitForMockWorker()`; no mobile, a importação do worker é adiada em 700 ms para aliviar o primeiro paint. Handlers de perfil e scanner são chunks sob demanda; as avaliações ficam disponíveis no início porque acompanham a tela de detalhe.
 - `vercel.json` encaminha rotas diretas da SPA para `index.html`.
 
 ## Contratos REST
@@ -27,13 +27,14 @@ Os contratos TypeScript são compartilhados entre clientes, handlers e interface
 | --- | --- | --- |
 | Sessão | `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/session`, `POST /api/auth/logout` | Cadastro, autenticação, restauração de sessão e saída. |
 | Usuários | `GET /api/users`, `GET /api/users/:userId` | Perfis fictícios e dados do usuário autenticado/avaliador. |
+| Perfil | `GET /api/profile`, `PUT /api/profile`, `PUT /api/profile/password` | Consulta e persiste dados de perfil e senha da conta autenticada. |
 | NFTs | `GET /api/nfts`, `GET /api/nfts/:nftId`, `GET /api/nfts/:nftId/reviews` | Busca, filtros, ordenação, paginação, detalhe e avaliações. |
 | Carrinho e cotação | `GET /api/cart`, `PUT /api/cart`, `POST /api/cart/quote` | Carrinho por visitante/conta, validação de edição e total por rede/cupom. |
 | Pedidos | `POST /api/orders`, `GET /api/orders/:orderId` | Criação idempotente, consulta autorizada e snapshot para recibo. |
 | Scanner | `POST /api/scan/resolve` | Resolve um código de demonstração para um NFT. |
 | Cenários de mock | `/api/mock/*` | Reset, sessão expirada, falhas de rede, preço/disponibilidade, cenário e estado de pedido. |
 
-Favoritos, atualização de perfil/avatar/senha e cadastro/edição de carteiras ainda não possuem endpoints REST. As telas relacionadas não persistem essas alterações na API simulada. Essa diferença permanece explícita para não sugerir que os recursos completos do contrato foram entregues.
+Favoritos e operações CRUD de carteiras ainda não possuem endpoints REST; avatar também não é editável. O formulário de perfil e a troca de senha já persistem pela API simulada. O formulário de colecionador do checkout continua demonstrativo e seus dados não são enviados junto à criação do pedido.
 
 ## Sessão, isolamento e carrinho
 
@@ -77,9 +78,9 @@ O detalhe do transporte é `VITE_SOCKET_URL` vazio, que usa a origem do site e o
 ## Cenários, testes e auditorias
 
 - `docs/MOCK_BACKEND.md` documenta seleção de cenários para latência, falhas, cupom, indisponibilidade, timeout/idempotência, pagamento e reset.
-- `e2e/marketplace.spec.ts` verifica onze fluxos funcionais em Chromium desktop e mobile, incluindo Socket.IO para detalhe e carrinho, overflow em 768 px, filtro mobile sob demanda e prévia ampliada no desktop. A última execução teve 28 testes aprovados e dois ignorados por viewport.
+- `e2e/marketplace.spec.ts` verifica doze fluxos funcionais em Chromium desktop e mobile, incluindo Socket.IO para detalhe e carrinho, perfil autenticado, overflow em 768 px, filtro mobile sob demanda e prévia ampliada no desktop. A última execução teve 30 testes aprovados e dois ignorados por viewport.
 - `e2e/visual-regression.spec.ts` compara início, detalhe, carrinho e pagamento com oito baselines PNG versionados em `e2e/visual-regression.spec.ts-snapshots/`. O relatório HTML da execução está em `docs/audits/playwright/`; traces de falhas são retidos em `test-results/`.
-- Os cenários E2E restantes do enunciado ainda não estão completos: busca/filtros/histórico, ciclo completo de sessão, rollback de favorito, edição de perfil/carteiras, disputa de eventos, retomada por reconexão, navegação por teclado e recuperação de carregamento/erro. A cobertura atual não equivale aos doze grupos funcionais enumerados no desafio.
+- Os cenários E2E restantes do enunciado ainda não estão completos: busca/filtros/histórico, ciclo completo de sessão, rollback de favorito, isolamento de perfil/carteiras, disputa de eventos, retomada por reconexão, navegação por teclado e recuperação de carregamento/erro. A cobertura atual não equivale aos doze grupos funcionais enumerados no desafio.
 - `lighthouserc.desktop.json` e `lighthouserc.mobile.json` coletam três medições por rota em Home e detalhe, definem os limites do desafio e gravam JSON/HTML versionados em `docs/audits/lighthouse/`.
 
 ## Decisões visuais e limitações

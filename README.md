@@ -23,7 +23,7 @@ React, TypeScript, Vite, TanStack Router, TanStack Query, Axios, Tailwind CSS, s
 
 ## Executar localmente
 
-Requisitos: Node.js 22+, npm e Git.
+Requisitos: Node.js 22.x, npm e Git.
 
 ```bash
 git clone https://github.com/Kmz-7/marketplace-nfts.git
@@ -69,7 +69,7 @@ npm run audit:lighthouse        # Lighthouse CI: Home e detalhe, 3 medições de
 npm run audit:lighthouse:mobile # Lighthouse CI: Home e detalhe, 3 medições mobile
 ```
 
-O Playwright executa 30 casos entre Chromium desktop e mobile: 28 passam e dois são ignorados porque cada teste é específico do outro viewport/projeto (filtros mobile e prévia desktop). São 11 fluxos funcionais e quatro regressões visuais (Home, detalhe, carrinho e pagamento). Os fluxos exercitam avaliações e expansão de texto, NFT inexistente, atualização de preço via Socket.IO no detalhe e carrinho, quantidades, cupom, login durante checkout, recuperação de timeout, recusa de pagamento, autenticação para favoritar, overflow nas quatro telas em 768 px, filtros mobile sob demanda e prévia ampliada desktop. As capturas visuais comparam 390 px (mobile) e 1440 px (desktop); o teste responsivo adicional verifica 768 px. Os oito baselines PNG ficam versionados em `e2e/visual-regression.spec.ts-snapshots/`. O relatório HTML executável fica versionado em `docs/audits/playwright/`; em falhas, o trace é retido em `test-results/`. Os relatórios Lighthouse ficam em `docs/audits/lighthouse/`.
+O Playwright executa 32 ocorrências (12 fluxos funcionais e quatro regressões visuais, em Chromium desktop e mobile): 30 passam e dois são ignorados por viewport (filtros mobile e prévia desktop). Os fluxos exercitam avaliações e expansão de texto, NFT inexistente, atualização de preço via Socket.IO no detalhe e carrinho, quantidades, cupom, login durante checkout, recuperação de timeout, recusa de pagamento, autenticação para favoritar, leitura/edição do perfil, overflow nas quatro telas em 768 px, filtros mobile sob demanda e prévia ampliada desktop. As capturas visuais comparam 390 px (mobile) e 1440 px (desktop); o teste responsivo adicional verifica 768 px. Os oito baselines PNG ficam versionados em `e2e/visual-regression.spec.ts-snapshots/`. O relatório HTML executável fica versionado em `docs/audits/playwright/`; em falhas, o trace é retido em `test-results/`. Os relatórios Lighthouse ficam em `docs/audits/lighthouse/`.
 
 Para a auditoria Lighthouse, gere primeiro o build (`npm run build`). Cada comando inicia e encerra seu preview; as configurações desktop e mobile auditam a Home e `/nft?item=emerald-ape-042` três vezes cada e validam os alvos do desafio: performance ≥90, acessibilidade ≥95, boas práticas ≥95 e SEO ≥90.
 
@@ -115,12 +115,12 @@ Cada célula é a mediana de três auditorias por página e perfil. A meta do de
 
 | Perfil | Página | Performance | Acessibilidade | Boas práticas | SEO | LCP mediano | CLS | TBT mediano |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Desktop | Início | 97 | 100 | 100 | 100 | 1,21 s | 0 | 1 ms |
-| Desktop | Detalhes do NFT | 99 | 100 | 100 | 100 | 0,89 s | 0 | 0 ms |
-| Mobile | Início | 86 | 98 | 100 | 100 | 4,06 s | 0 | 77 ms |
-| Mobile | Detalhes do NFT | 90 | 100 | 100 | 100 | 3,64 s | 0 | 79 ms |
+| Desktop | Início | 98 | 100 | 100 | 100 | 1,19 s | 0,0004 | 0 ms |
+| Desktop | Detalhes do NFT | 99 | 100 | 100 | 100 | 0,90 s | 0 | 0 ms |
+| Mobile | Início | 86 | 98 | 100 | 100 | 4,14 s | 0 | 90 ms |
+| Mobile | Detalhes do NFT | 88 | 100 | 100 | 100 | 3,90 s | 0 | 113 ms |
 
-Os resultados são medianas de três execuções por página/perfil no build de produção com MSW, sem desativar imagens, fontes ou funcionalidades. O Lighthouse mobile usa throttling simulado e o Chromium headless do ambiente local. A Home mobile não atingiu a meta de performance (90): o Lighthouse estima 121 KiB de JavaScript não utilizado na carga inicial, somando trechos do cliente MSW e do bundle da aplicação. A configuração manteve a meta original; o comando mobile retorna falha enquanto a mediana da Home permanecer em 86. Versões, ambiente, causa observada e relatórios HTML/JSON estão em [`docs/audits/lighthouse/README.md`](docs/audits/lighthouse/README.md).
+Os resultados são medianas de três execuções por página/perfil no build de produção com MSW, sem desativar imagens, fontes ou funcionalidades. O Lighthouse mobile usa throttling simulado e o Chromium headless do ambiente local. Home (86) e detalhe (88) continuam abaixo da meta de performance (90); o Lighthouse estima 121 KiB de JavaScript não utilizado na Home e 119 KiB no detalhe, concentrados no cliente MSW e no bundle inicial. Handlers não críticos de perfil e scanner foram separados para carregamento sob demanda, mas isso não reduziu a estimativa reportada nem fez as páginas alcançarem a meta. O comando mobile retorna falha até a pontuação passar de 90. Versões, ambiente, diagnóstico e relatórios HTML/JSON estão em [`docs/audits/lighthouse/README.md`](docs/audits/lighthouse/README.md).
 
 ## Estrutura e documentação
 
@@ -136,6 +136,6 @@ Os resultados são medianas de três execuções por página/perfil no build de 
 
 ## Escopo conhecido
 
-Esta entrega cobre os principais fluxos executáveis do marketplace, mas não substitui um backend de produção. Favoritos e alterações de perfil/carteiras ainda não usam endpoints REST; o formulário de perfil no checkout não é persistido nem enviado no pedido. A cobertura automatizada atual é uma suíte de fluxo essencial, não os doze grupos completos do desafio: faltam cenários E2E dedicados para histórico/URL de filtros, rollback de favoritos, isolamento de perfil/carteiras, atualização e reconciliação via socket, reconexão e regressões visuais. Esses limites estão detalhados em [`docs/MOCK_BACKEND.md`](docs/MOCK_BACKEND.md).
+Esta entrega cobre os principais fluxos executáveis do marketplace, mas não substitui um backend de produção. Favoritos e operações CRUD de carteiras ainda não usam endpoints REST; avatar também não é editável. Perfil e senha já são consultados e persistidos pela API simulada. O formulário de perfil no checkout continua demonstrativo e não é enviado no pedido. A cobertura automatizada atual é uma suíte de fluxo essencial, não os doze grupos completos do desafio: faltam cenários E2E dedicados para histórico/URL de filtros, rollback de favoritos, isolamento de perfil/carteiras, atualização e reconciliação via socket, reconexão e regressões visuais. Esses limites estão detalhados em [`docs/MOCK_BACKEND.md`](docs/MOCK_BACKEND.md).
 
 Consulte o [enunciado oficial](https://github.com/junglegaming/frontend-challenge) para os critérios completos do desafio.

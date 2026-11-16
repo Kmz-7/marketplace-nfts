@@ -4,7 +4,7 @@
 
 ## Requisitos
 
-- Node.js 22 ou superior (ambiente atual: Node 22).
+- Node.js 22.x (fixado também em `package.json` e `.nvmrc` para reproduzir o runtime local na Vercel).
 - npm 10 ou superior.
 - Git.
 
@@ -64,6 +64,10 @@ npx msw init public/ --save
 ```
 
 **MSW** intercepta requisições no nível da rede para simular REST sem espalhar dados falsos pelos componentes. O worker inicia antes do React quando `VITE_ENABLE_MOCKS=true`, tanto no desenvolvimento quanto no build de demonstração. Catálogo, serviço Axios, fixtures, handlers e Socket.IO estão descritos em [MOCK_BACKEND.md](./MOCK_BACKEND.md). O binding `@mswjs/socket.io-binding` adapta mensagens WebSocket ao protocolo de eventos Socket.IO usado pelo cliente.
+
+O `package.json` autoriza explicitamente o `postinstall` da versão fixada `msw@2.15.0`; esse script copia/atualiza `public/mockServiceWorker.js` conforme `msw.workerDirectory`. A aprovação é específica da versão para que futuras versões não recebam permissão automática.
+
+O aviso `Unknown env config "cache-dir"` não é causado por um `.npmrc` do projeto (o repositório não tem esse arquivo). Node 22 seleciona npm 10 nos builds da Vercel. Se o aviso permanecer após usar a nova configuração, revise as variáveis de ambiente do projeto por `NPM_CONFIG_CACHE_DIR` ou `npm_config_cache_dir`, pois elas podem vir de fora do repositório.
 
 > `@mswjs/socket.io-binding@0.2` exige MSW 2 (`peerDependency ^2.10.2`); por isso a versão foi fixada na linha `2.x`.
 

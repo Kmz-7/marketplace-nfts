@@ -61,7 +61,23 @@ function readAccounts(): StoredAccount[] {
   if (stored) {
     try {
       const parsed: unknown = JSON.parse(stored)
-      if (Array.isArray(parsed)) return parsed as StoredAccount[]
+      if (Array.isArray(parsed)) {
+        const seedUsers = new Map(seedAccounts.map(({ user }) => [user.id, user]))
+        return (parsed as StoredAccount[]).map((account) => {
+          const seedUser = seedUsers.get(account.user.id)
+          return {
+            ...account,
+            user: {
+              ...seedUser,
+              ...account.user,
+              username:
+                account.user.username ?? seedUser?.username ?? usernameFromName(account.user.name),
+              ensName: account.user.ensName ?? seedUser?.ensName ?? '',
+              walletAlias: account.user.walletAlias ?? seedUser?.walletAlias ?? '',
+            },
+          }
+        })
+      }
     } catch {
       removeStorage(ACCOUNTS_KEY)
     }
@@ -97,6 +113,17 @@ function createSalt() {
   return Array.from(crypto.getRandomValues(new Uint8Array(16)), (byte) =>
     byte.toString(16).padStart(2, '0'),
   ).join('')
+}
+
+function usernameFromName(name: string) {
+  return (
+    name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLocaleLowerCase('en-US')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || 'colecionador'
+  )
 }
 
 function createToken() {
@@ -136,6 +163,9 @@ export async function createMockAccount(name: string, email: string, password: s
     email: email.trim().toLocaleLowerCase('en-US'),
     avatarUrl: '',
     createdAt: new Date().toISOString(),
+    username: usernameFromName(name),
+    ensName: '',
+    walletAlias: '',
   }
   const account: StoredAccount = { user, salt, passwordHash: await hashPassword(password, salt) }
   writeStorage(ACCOUNTS_KEY, JSON.stringify([...readAccounts(), account]))
@@ -175,6 +205,47 @@ export function getMockSession(accessToken: string | null): SessionContract {
     return { authenticated: false, user: null }
   }
   return { authenticated: true, user: account.user }
+}
+
+export function isMockEmailTaken(email: string, excludedUserId: string) {
+  const normalizedEmail = email.trim().toLocaleLowerCase('en-US')
+  return readAccounts().some(
+    (account) =>
+      account.user.id !== excludedUserId &&
+      account.user.email.toLocaleLowerCase('en-US') === normalizedEmail,
+  )
+}
+
+export function updateMockUserProfile(userId: string, profile: {
+  name: string
+  username: string
+  email: string
+  ensName: string
+  walletAlias: string
+}) {
+  const accounts = readAccounts()
+  const account = accounts.find((candidate) => candidate.user.id === userId)
+  if (!account) return null
+
+  account.user = { ...account.user, ...profile }
+  writeStorage(ACCOUNTS_KEY, JSON.stringify(accounts))
+  return account.user
+}
+
+export async function updateMockUserPassword(
+  userId: string,
+  currentPassword: string,
+  newPassword: string,
+) {
+  const accounts = readAccounts()
+  const account = accounts.find((candidate) => candidate.user.id === userId)
+  if (!account || !(await verifyMockPassword(account, currentPassword))) return false
+
+  const salt = createSalt()
+  account.salt = salt
+  account.passwordHash = await hashPassword(newPassword, salt)
+  writeStorage(ACCOUNTS_KEY, JSON.stringify(accounts))
+  return true
 }
 
 export function clearMockSession() {
