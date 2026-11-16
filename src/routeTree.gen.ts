@@ -10,37 +10,39 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CadastroRouteImport } from './routes/cadastro'
-import { Route as CarrinhoRouteImport } from './routes/carrinho'
-import { Route as CarteirasRouteImport } from './routes/carteiras'
-import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as LegacyRouteImport } from './routes/$legacy'
+import { Route as CartRouteImport } from './routes/cart'
+import { Route as ConfirmationRouteImport } from './routes/confirmation'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as NftRouteImport } from './routes/nft'
-import { Route as PagamentoRouteImport } from './routes/pagamento'
-import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as PaymentRouteImport } from './routes/payment'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as WalletsRouteImport } from './routes/wallets'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CadastroRoute = CadastroRouteImport.update({
-  id: '/cadastro',
-  path: '/cadastro',
+const LegacyRoute = LegacyRouteImport.update({
+  id: '/$legacy',
+  path: '/$legacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CarrinhoRoute = CarrinhoRouteImport.update({
-  id: '/carrinho',
-  path: '/carrinho',
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CarteirasRoute = CarteirasRouteImport.update({
-  id: '/carteiras',
-  path: '/carteiras',
+const ConfirmationRoute = ConfirmationRouteImport.update({
+  id: '/confirmation',
+  path: '/confirmation',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EntrarRoute = EntrarRouteImport.update({
-  id: '/entrar',
-  path: '/entrar',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NftRoute = NftRouteImport.update({
@@ -48,90 +50,114 @@ const NftRoute = NftRouteImport.update({
   path: '/nft',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PagamentoRoute = PagamentoRouteImport.update({
-  id: '/pagamento',
-  path: '/pagamento',
+const PaymentRoute = PaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PerfilRoute = PerfilRouteImport.update({
-  id: '/perfil',
-  path: '/perfil',
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalletsRoute = WalletsRouteImport.update({
+  id: '/wallets',
+  path: '/wallets',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/cadastro': typeof CadastroRoute
-  '/carrinho': typeof CarrinhoRoute
-  '/carteiras': typeof CarteirasRoute
-  '/entrar': typeof EntrarRoute
+  '/$legacy': typeof LegacyRoute
+  '/cart': typeof CartRoute
+  '/confirmation': typeof ConfirmationRoute
+  '/login': typeof LoginRoute
   '/nft': typeof NftRoute
-  '/pagamento': typeof PagamentoRoute
-  '/perfil': typeof PerfilRoute
+  '/payment': typeof PaymentRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/wallets': typeof WalletsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/cadastro': typeof CadastroRoute
-  '/carrinho': typeof CarrinhoRoute
-  '/carteiras': typeof CarteirasRoute
-  '/entrar': typeof EntrarRoute
+  '/$legacy': typeof LegacyRoute
+  '/cart': typeof CartRoute
+  '/confirmation': typeof ConfirmationRoute
+  '/login': typeof LoginRoute
   '/nft': typeof NftRoute
-  '/pagamento': typeof PagamentoRoute
-  '/perfil': typeof PerfilRoute
+  '/payment': typeof PaymentRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/wallets': typeof WalletsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/cadastro': typeof CadastroRoute
-  '/carrinho': typeof CarrinhoRoute
-  '/carteiras': typeof CarteirasRoute
-  '/entrar': typeof EntrarRoute
+  '/$legacy': typeof LegacyRoute
+  '/cart': typeof CartRoute
+  '/confirmation': typeof ConfirmationRoute
+  '/login': typeof LoginRoute
   '/nft': typeof NftRoute
-  '/pagamento': typeof PagamentoRoute
-  '/perfil': typeof PerfilRoute
+  '/payment': typeof PaymentRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/wallets': typeof WalletsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/cadastro'
-    | '/carrinho'
-    | '/carteiras'
-    | '/entrar'
+    | '/$legacy'
+    | '/cart'
+    | '/confirmation'
+    | '/login'
     | '/nft'
-    | '/pagamento'
-    | '/perfil'
+    | '/payment'
+    | '/profile'
+    | '/register'
+    | '/wallets'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/cadastro'
-    | '/carrinho'
-    | '/carteiras'
-    | '/entrar'
+    | '/$legacy'
+    | '/cart'
+    | '/confirmation'
+    | '/login'
     | '/nft'
-    | '/pagamento'
-    | '/perfil'
+    | '/payment'
+    | '/profile'
+    | '/register'
+    | '/wallets'
   id:
     | '__root__'
     | '/'
-    | '/cadastro'
-    | '/carrinho'
-    | '/carteiras'
-    | '/entrar'
+    | '/$legacy'
+    | '/cart'
+    | '/confirmation'
+    | '/login'
     | '/nft'
-    | '/pagamento'
-    | '/perfil'
+    | '/payment'
+    | '/profile'
+    | '/register'
+    | '/wallets'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CadastroRoute: typeof CadastroRoute
-  CarrinhoRoute: typeof CarrinhoRoute
-  CarteirasRoute: typeof CarteirasRoute
-  EntrarRoute: typeof EntrarRoute
+  LegacyRoute: typeof LegacyRoute
+  CartRoute: typeof CartRoute
+  ConfirmationRoute: typeof ConfirmationRoute
+  LoginRoute: typeof LoginRoute
   NftRoute: typeof NftRoute
-  PagamentoRoute: typeof PagamentoRoute
-  PerfilRoute: typeof PerfilRoute
+  PaymentRoute: typeof PaymentRoute
+  ProfileRoute: typeof ProfileRoute
+  RegisterRoute: typeof RegisterRoute
+  WalletsRoute: typeof WalletsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -143,32 +169,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cadastro': {
-      id: '/cadastro'
-      path: '/cadastro'
-      fullPath: '/cadastro'
-      preLoaderRoute: typeof CadastroRouteImport
+    '/$legacy': {
+      id: '/$legacy'
+      path: '/$legacy'
+      fullPath: '/$legacy'
+      preLoaderRoute: typeof LegacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/carrinho': {
-      id: '/carrinho'
-      path: '/carrinho'
-      fullPath: '/carrinho'
-      preLoaderRoute: typeof CarrinhoRouteImport
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/carteiras': {
-      id: '/carteiras'
-      path: '/carteiras'
-      fullPath: '/carteiras'
-      preLoaderRoute: typeof CarteirasRouteImport
+    '/confirmation': {
+      id: '/confirmation'
+      path: '/confirmation'
+      fullPath: '/confirmation'
+      preLoaderRoute: typeof ConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/entrar': {
-      id: '/entrar'
-      path: '/entrar'
-      fullPath: '/entrar'
-      preLoaderRoute: typeof EntrarRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/nft': {
@@ -178,18 +204,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NftRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pagamento': {
-      id: '/pagamento'
-      path: '/pagamento'
-      fullPath: '/pagamento'
-      preLoaderRoute: typeof PagamentoRouteImport
+    '/payment': {
+      id: '/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/perfil': {
-      id: '/perfil'
-      path: '/perfil'
-      fullPath: '/perfil'
-      preLoaderRoute: typeof PerfilRouteImport
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wallets': {
+      id: '/wallets'
+      path: '/wallets'
+      fullPath: '/wallets'
+      preLoaderRoute: typeof WalletsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -197,13 +237,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CadastroRoute: CadastroRoute,
-  CarrinhoRoute: CarrinhoRoute,
-  CarteirasRoute: CarteirasRoute,
-  EntrarRoute: EntrarRoute,
+  LegacyRoute: LegacyRoute,
+  CartRoute: CartRoute,
+  ConfirmationRoute: ConfirmationRoute,
+  LoginRoute: LoginRoute,
   NftRoute: NftRoute,
-  PagamentoRoute: PagamentoRoute,
-  PerfilRoute: PerfilRoute,
+  PaymentRoute: PaymentRoute,
+  ProfileRoute: ProfileRoute,
+  RegisterRoute: RegisterRoute,
+  WalletsRoute: WalletsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

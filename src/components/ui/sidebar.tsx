@@ -302,12 +302,13 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
 function SidebarInput({
   className,
   ...props
-}: React.ComponentProps<typeof Input>) {
+}: Omit<React.ComponentProps<typeof Input>, "variant">) {
   return (
     <Input
       data-slot="sidebar-input"
       data-sidebar="input"
-      className={cn("h-8 w-full bg-background shadow-none", className)}
+      variant="sidebar"
+      className={className}
       {...props}
     />
   )
